@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "AMD",
+    "jsx": "react",
+    "moduleResolution": "Node",
+    "baseUrl": "."
+  },
+  "include": ["src/", "example/"]
+}

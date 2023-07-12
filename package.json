@@ -1,0 +1,33 @@
+{
+  "name": "react-voice-message-player",
+  "version": "0.0.0",
+  "description": "React component for rendering voice messages in chat-based apps",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "esbuild example/index.tsx --bundle --outdir=example/www/js --servedir=example/www --serve --watch",
+    "test": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "tbd"
+  },
+  "keywords": [
+    "react",
+    "voice",
+    "audio",
+    "message",
+    "player"
+  ],
+  "author": "Vadym Avdieiev",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": ">= 17.0.0",
+    "react-dom": ">= 17.0.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.18.11",
+    "prettier": "3.0.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  }
+}
