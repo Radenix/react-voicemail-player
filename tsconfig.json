@@ -4,6 +4,7 @@
     "module": "AMD",
     "jsx": "react",
     "moduleResolution": "Node",
+    "esModuleInterop": true,
     "baseUrl": "."
   },
   "include": ["src/", "example/"]

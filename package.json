@@ -1,5 +1,5 @@
 {
-  "name": "react-voice-message-player",
+  "name": "react-voicemail-player",
   "version": "0.0.0",
   "description": "React component for rendering voice messages in chat-based apps",
   "main": "dist/index.js",
@@ -25,9 +25,13 @@
     "react-dom": ">= 17.0.0"
   },
   "devDependencies": {
+    "@types/react-dom": "^18.2.7",
     "esbuild": "0.18.11",
     "prettier": "3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
+  },
+  "dependencies": {
+    "use-sync-external-store": "^1.2.0"
   }
 }

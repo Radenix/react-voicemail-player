@@ -1,5 +1,5 @@
 import React from "react";
-import VoiceMessagePlayer from "src/VoiceMessagePlayer";
+import VoicemailPlayer from "src/VoicemailPlayer";
 
 export default function App() {
   return (
@@ -9,12 +9,17 @@ export default function App() {
         height: "400px",
         margin: "auto",
         display: "flex",
+        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        background: "lemonchiffon",
+        background: "#18222d",
       }}
     >
-      <VoiceMessagePlayer src="/audios/long.mp3" />
+      <VoicemailPlayer src="/audios/short.mp3" />
+      <hr />
+      <VoicemailPlayer src="/audios/medium.mp3" />
+      <hr />
+      <VoicemailPlayer src="/audios/long.mp3" />
     </div>
   );
 }
