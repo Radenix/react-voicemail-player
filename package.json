@@ -4,7 +4,7 @@
   "description": "React component for rendering voice messages in chat-based apps",
   "main": "dist/index.js",
   "scripts": {
-    "start": "esbuild example/index.tsx --bundle --outdir=example/www/js --servedir=example/www --serve --watch",
+    "start": "esbuild example/index.tsx --bundle --outdir=example/js --servedir=example/ --serve --watch",
     "test": ""
   },
   "repository": {
