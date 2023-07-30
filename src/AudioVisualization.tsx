@@ -9,7 +9,7 @@ export default function AudioVisualization({
   progress: number;
 }) {
   const width = 220;
-  const height = 20;
+  const height = 16;
   const barWidth = 2;
   const barGap = 1;
   const barCount = Math.round(width / (barWidth + barGap));
@@ -40,26 +40,16 @@ export default function AudioVisualization({
   };
 
   return (
-    <svg width={width} height={height}>
+    <svg className="rvmp-viz-container" width={width} height={height}>
       <defs>
         <clipPath id={clipPathId}>{renderBars()}</clipPath>
       </defs>
       <g clipPath={`url(#${clipPathId})`}>
+        <rect className="rvmp-viz-bg" width={width} height={height}></rect>
         <rect
-          className="bg"
-          width={width}
-          height={height}
-          fill="#7a8998"
-        ></rect>
-        <rect
-          className="progress"
-          x="0"
+          className="rvmp-viz-progress"
+          x={progress * width - width}
           y="0"
-          style={{
-            fill: "#0077d8",
-            transform: `translateX(${progress * width - width}px)`,
-            transition: "transform 250ms",
-          }}
           width={width}
           height={height}
         />

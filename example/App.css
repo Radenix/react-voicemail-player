@@ -1,0 +1,24 @@
+.app {
+  width: 100%;
+  height: 100%;
+  padding-top: 80px;
+}
+
+.theme-picker {
+  width: 260px;
+  margin: 0 auto;
+  margin-bottom: 20px;
+
+  & select {
+    padding: 4px;
+    margin-left: 4px;
+  }
+}
+
+.example-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 18px;
+}

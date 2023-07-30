@@ -1,0 +1,43 @@
+.rvmp-root {
+  display: flex;
+  gap: 8px;
+  width: 260px;
+  height: 40px;
+  font-size: 12px;
+  font-family: inherit;
+
+  .rvmp-play-pause-btn {
+    flex: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    color: #fff;
+    background: #1992d4;
+    border: none;
+    padding: 8px;
+
+    & svg {
+      fill: currentColor;
+    }
+  }
+
+  .rvmp-main-content {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+  }
+
+  .rvmp-viz-container {
+    display: block;
+
+    & .rvmp-viz-bg {
+      fill: #7a8998;
+    }
+
+    & .rvmp-viz-progress {
+      fill: #1992d4;
+    }
+  }
+}
