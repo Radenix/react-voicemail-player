@@ -1,26 +1,15 @@
-import React, { useCallback, useState, useMemo } from "react";
+import React, { useCallback, useMemo } from "react";
 import { useSyncExternalStore } from "use-sync-external-store/shim";
 import { AudioPlaybackState, AudioPlaybackCommands } from "../audio-playback";
 
 /**
- * Returns an array with 3 elements:
- * 1. Callback to set as `ref` on html audio element
- * 2. An object that represents current audio playback state
- * 3. An object with methods you can call to control the audio playback
+ * Starts listening to changes to the audio element, making a new snapshot of
+ * the state whenever they occur. Returns the latest snapshot taken and a
+ * `AudioPlaybackCommands` object that has methods to control the playback
  */
-export default function useAudioPlayback(): [
-  React.RefCallback<HTMLAudioElement>,
-  AudioPlaybackState,
-  AudioPlaybackCommands,
-] {
-  const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
-    null
-  );
-  const setRefCallback = useCallback(
-    (node: HTMLAudioElement) => setAudioElement(node),
-    []
-  );
-
+export default function useAudioPlayback(
+  audioElement: HTMLAudioElement | null
+): [AudioPlaybackState, AudioPlaybackCommands] {
   const subscribeToAudio = useCallback(
     (callback) => {
       if (!audioElement) {
@@ -90,5 +79,5 @@ export default function useAudioPlayback(): [
     };
   }, [audioElement]);
 
-  return [setRefCallback, state, commands];
+  return [state, commands];
 }

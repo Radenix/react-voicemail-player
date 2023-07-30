@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
+import useAudioBlob from "./useAudioBlob";
 
-// since the decoded audio will only be used for visualization,
-// the lowest sample rate should be enough
+// the decoded audio will only be used for visualization,
+// so the lowest sample rate is enough (unless we try to
+// render > 8000 bars in the visualization and the audio
+// is less than a second long)
 const SAMPLE_RATE = 8000;
 
 /**
- * Decodes the audio data contained in `blob` into an `AudioBuffer`
+ * Loads the audio source (from disk cache because the browser has already
+ * started loading it) and decodes the data into an `AudioBuffer`
  */
-export default function useAudioData(blob: Blob): AudioBuffer | null {
+export default function useAudioData(
+  audioElement: HTMLAudioElement | null
+): AudioBuffer | null {
+  const blob = useAudioBlob(audioElement);
   const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
 
   useEffect(() => {
@@ -18,7 +25,9 @@ export default function useAudioData(blob: Blob): AudioBuffer | null {
     blob
       .arrayBuffer()
       .then(decodeAudioData)
-      .then((rawAudio) => setAudioBuffer(rawAudio))
+      .then((rawAudio) => {
+        setAudioBuffer(rawAudio);
+      })
       .catch((error) => {
         console.error(
           "[react-voicemail-player]: failed to decode audio",

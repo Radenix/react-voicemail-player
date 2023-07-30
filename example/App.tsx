@@ -26,9 +26,15 @@ export default function App() {
         </select>
       </div>
       <div className="example-container">
-        <VoicemailPlayer src="/audio/short.mp3" />
-        <VoicemailPlayer src="/audio/medium.mp3" />
-        <VoicemailPlayer src="/audio/long.mp3" />
+        <VoicemailPlayer>
+          {(ref) => <audio ref={ref} src="/audio/short.mp3" />}
+        </VoicemailPlayer>
+        <VoicemailPlayer>
+          {(ref) => <audio ref={ref} src="/audio/medium.mp3" />}
+        </VoicemailPlayer>
+        <VoicemailPlayer>
+          {(ref) => <audio ref={ref} src="/audio/long.mp3" />}
+        </VoicemailPlayer>
       </div>
     </div>
   );

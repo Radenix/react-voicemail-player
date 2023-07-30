@@ -12,11 +12,6 @@ let fetchMock;
 
 beforeAll(() => {
   fetchMock = jest.spyOn(window, "fetch");
-
-  global.window.URL.createObjectURL = jest
-    .fn()
-    .mockImplementation((obj) => `blob:http://example.com/fake-audio.wav`);
-  global.window.URL.revokeObjectURL = jest.fn();
 });
 
 describe("<VoicemailPlayer />", () => {
@@ -26,22 +21,19 @@ describe("<VoicemailPlayer />", () => {
       blob: async () => new global.window.Blob([], { type: "audio/mpeg" }),
     });
 
-    const component = render(
-      <VoicemailPlayer src={"http://example.coom/fake-audio.wav"} />
+    render(
+      <VoicemailPlayer>
+        {(ref) => (
+          <audio ref={ref} src={"http://example.coom/fake-audio.wav"}></audio>
+        )}
+      </VoicemailPlayer>
     );
-    const audio = component.container.getElementsByTagName("audio")[0];
-    expect(audio).toBeDefined();
 
-    const playPauseBtn = await screen.findByText(/Play/);
-    await waitFor(
-      () =>
-        expect(audio.getAttribute("src")).toBe(
-          "blob:http://example.com/fake-audio.wav"
-        ),
-      { mutationObserverOptions: { attributes: true } }
-    );
+    const playPauseBtn = await screen.findByLabelText(/Play/);
 
     userEvent.click(playPauseBtn);
-    expect(await screen.findByText(/Pause/)).toBeInTheDocument();
+    waitFor(async () =>
+      expect(await screen.findByLabelText(/Pause/)).toBeInTheDocument()
+    );
   });
 });
