@@ -1,42 +1,99 @@
 import { useEffect, useState } from "react";
-import useAudioBlob from "./useAudioBlob";
 
-// the decoded audio will only be used for visualization,
-// so the lowest sample rate is enough (unless we try to
-// render > 8000 bars in the visualization and the audio
-// is less than a second long)
+// the decoded audio is only used for visualization,
+// so the lowest sample rate is enough
 const SAMPLE_RATE = 8000;
 
+type MaybeError = any;
+
 /**
- * Loads the audio source (from disk cache because the browser has already
- * started loading it) and decodes the data into an `AudioBuffer`
+ * Loads the audio source and decodes the data into an `AudioBuffer`.
+ * Since we only fetch the data after the browser has started loading it,
+ * no new network request is actually being send.
  */
 export default function useAudioData(
   audioElement: HTMLAudioElement | null
-): AudioBuffer | null {
-  const blob = useAudioBlob(audioElement);
-  const [audioBuffer, setAudioBuffer] = useState<AudioBuffer | null>(null);
+): [AudioBuffer | null, MaybeError | null] {
+  const audioUrl = useAudioSourceUrl(audioElement);
+  const [result, setResult] = useState<AudioBuffer | null>(null);
+  const [error, setError] = useState<MaybeError | null>(null);
 
   useEffect(() => {
-    if (blob == null) {
+    if (!audioUrl) {
       return;
     }
 
-    blob
-      .arrayBuffer()
-      .then(decodeAudioData)
-      .then((rawAudio) => {
-        setAudioBuffer(rawAudio);
+    const abortController = new AbortController();
+    fetch(audioUrl, { signal: abortController.signal })
+      .then((response) => response.arrayBuffer())
+      .then((buffer) => {
+        abortController.signal.throwIfAborted();
+        return decodeAudioData(buffer);
       })
-      .catch((error) => {
+      .then((audioBuffer) => {
+        abortController.signal.throwIfAborted();
+        setResult(audioBuffer);
+      })
+      .catch((err) => {
+        if (err.name === "AbortError") {
+          console.log("[react-voicemail-player]: audio processing cancelled");
+          return;
+        }
         console.error(
-          "[react-voicemail-player]: failed to decode audio",
-          error
+          "[react-voicemail-player]: failed to load or decode audio at " +
+            audioUrl,
+          err
         );
+        setError(err);
       });
-  }, [blob]);
 
-  return audioBuffer;
+    return () => abortController.abort();
+  }, [audioUrl]);
+
+  return [result, error];
+}
+
+/**
+ * Returns the value of the audioElement's `currentSrc` property when and if
+ * it becomes available AND it is a URL that can be `fetch`ed
+ */
+function useAudioSourceUrl(audioElement: HTMLAudioElement | null) {
+  const [result, setResult] = useState<string | null>(audioElement?.currentSrc);
+
+  useEffect(() => {
+    if (!audioElement) {
+      return;
+    }
+
+    const trySetUrl = () => {
+      const url = tryParseUrl(audioElement.currentSrc);
+      if (url && ["https:", "http:", "blob:"].includes(url.protocol)) {
+        setResult(url.href);
+        return true;
+      }
+      return false;
+    };
+
+    if (trySetUrl()) {
+      return;
+    }
+
+    const onLoadStart = () => {
+      trySetUrl();
+    };
+    audioElement.addEventListener("loadstart", onLoadStart);
+    return () => audioElement.removeEventListener("loadstart", onLoadStart);
+  }, [audioElement]);
+
+  return result;
+}
+
+function tryParseUrl(str: string): URL | null {
+  try {
+    return new URL(str);
+  } catch (error) {
+    return null;
+  }
 }
 
 function decodeAudioData(buffer: ArrayBuffer): Promise<AudioBuffer> {

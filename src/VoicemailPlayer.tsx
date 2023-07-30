@@ -19,7 +19,7 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
     null
   );
-  const audioData = useAudioData(audioElement);
+  const [audioData, _audioError] = useAudioData(audioElement);
   const [playback, commands] = useAudioPlayback(audioElement);
 
   const renderAudio = props.children;
