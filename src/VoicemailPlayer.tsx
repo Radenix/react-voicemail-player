@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import useAudioData from "./hooks/useAudioData";
 import useAudioPlayback from "./hooks/useAudioPlayback";
-import AudioVisualization from "./AudioVisualization";
+import AudioPeaksBar from "./AudioPeaksBar";
 import PlayIcon from "./components/PlayIcon";
 import PauseIcon from "./components/PauseIcon";
 
@@ -19,7 +18,6 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
     null
   );
-  const [audioData, _audioError] = useAudioData(audioElement);
   const [playback, commands] = useAudioPlayback(audioElement);
 
   const renderAudio = props.children;
@@ -40,8 +38,8 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
             commands.seek(relativeX * playback.duration);
           }}
         >
-          <AudioVisualization
-            audioData={audioData}
+          <AudioPeaksBar
+            audioElement={audioElement}
             progress={playback.progress}
           />
         </div>

@@ -1,16 +1,21 @@
 import React, { useRef, useLayoutEffect, useState } from "react";
 import useAudioPeaks from "./hooks/useAudioPeaks";
+import useAudioData from "./hooks/useAudioData";
 
-export default function AudioVisualization({
-  audioData,
-  progress,
-}: {
-  audioData: AudioBuffer | null;
+export interface AudioPeaksBarProps {
+  audioElement: HTMLAudioElement | null;
   progress: number;
-}) {
+}
+
+export default function AudioPeaksBar({
+  audioElement,
+  progress,
+}: AudioPeaksBarProps) {
   const svgRef = useRef<SVGSVGElement>();
   const [width, setWidth] = useState(0);
   const [height, setHeight] = useState(0);
+
+  const [audioData] = useAudioData(audioElement);
 
   const barWidth = 2;
   const barGap = 1;
