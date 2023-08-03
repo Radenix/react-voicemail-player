@@ -1,4 +1,4 @@
-import React, { useRef, useLayoutEffect, useState } from "react";
+import React, { useRef, useLayoutEffect, useState, RefObject } from "react";
 import useAudioPeaks from "./hooks/useAudioPeaks";
 import useAudioData from "./hooks/useAudioData";
 
@@ -12,9 +12,7 @@ export default function AudioPeaksBar({
   progress,
 }: AudioPeaksBarProps) {
   const svgRef = useRef<SVGSVGElement>();
-  const [width, setWidth] = useState(0);
-  const [height, setHeight] = useState(0);
-
+  const { width, height } = useElementSize(svgRef);
   const [audioData] = useAudioData(audioElement);
 
   const barWidth = 2;
@@ -47,29 +45,6 @@ export default function AudioPeaksBar({
     return result;
   };
 
-  useLayoutEffect(() => {
-    const bbox = svgRef.current.getBoundingClientRect();
-    setWidth(bbox.width);
-    setHeight(bbox.height);
-
-    const observer = new ResizeObserver((entries) => {
-      const entry = entries[0];
-      let w, h;
-      if (entry.borderBoxSize) {
-        w = entry.borderBoxSize[0].inlineSize;
-        h = entry.borderBoxSize[0].blockSize;
-      } else {
-        w = entry.contentRect.width;
-        h = entry.contentRect.height;
-      }
-
-      setWidth(w);
-      setHeight(h);
-    });
-    observer.observe(svgRef.current);
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <svg className="rvmp-viz-container" ref={svgRef}>
       <defs>
@@ -87,4 +62,34 @@ export default function AudioPeaksBar({
       </g>
     </svg>
   );
+}
+
+function useElementSize(ref: RefObject<Element>) {
+  const [size, setSize] = useState<{ width: number; height: number }>({
+    width: 0,
+    height: 0,
+  });
+
+  useLayoutEffect(() => {
+    const bbox = ref.current.getBoundingClientRect();
+    setSize({ width: bbox.width, height: bbox.height });
+
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      let w, h;
+      if (entry.borderBoxSize) {
+        w = entry.borderBoxSize[0].inlineSize;
+        h = entry.borderBoxSize[0].blockSize;
+      } else {
+        w = entry.contentRect.width;
+        h = entry.contentRect.height;
+      }
+
+      setSize({ width: w, height: h });
+    });
+    observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, []);
+
+  return size;
 }
