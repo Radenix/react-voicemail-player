@@ -20,6 +20,15 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
   );
   const [playback, commands] = useAudioPlayback(audioElement);
 
+  const onMeterClick = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
+    const bbox = event.currentTarget.getBoundingClientRect();
+    const offsetX = event.clientX - bbox.left;
+    const relativeX = offsetX / bbox.width;
+    commands.seek(relativeX * playback.duration);
+  };
+
   const renderAudio = props.children;
   return (
     <div className="rvmp-root">
@@ -32,18 +41,21 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
       </button>
       <div className="rvmp-main-content">
         <div
-          onClick={(event) => {
-            const relativeX =
-              event.nativeEvent.offsetX / event.currentTarget.clientWidth;
-            commands.seek(relativeX * playback.duration);
-          }}
+          role="meter"
+          aria-valuenow={playback.currentTime}
+          aria-valuemax={playback.duration}
+          aria-valuetext={formatTime(playback.currentTime)}
+          aria-label="Current time"
+          onClick={onMeterClick}
         >
           <AudioPeaksBar
             audioElement={audioElement}
             progress={playback.progress}
           />
         </div>
-        <span>{formatTime(playback.remainingTime)}</span>
+        <span role="timer" aria-label="Remaining time">
+          {formatTime(playback.remainingTime)}
+        </span>
       </div>
       {renderAudio(setAudioElement)}
     </div>
