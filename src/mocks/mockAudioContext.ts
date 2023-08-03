@@ -1,5 +1,7 @@
-const MOCK_ADUIO_DURATION = 2; // seconds
-const MOCK_AUDIO_SAMPLE_RATE = 8000;
+// this duration only affects the length of the AudioBuffer
+// that is created by `decodeAudioData` below
+const MOCK_ADUIO_DURATION = 10; // seconds
+const MOCK_AUDIO_SAMPLE_RATE = 8000; // per second
 const MOCK_AUDIO_BUFFER_LENGTH = MOCK_ADUIO_DURATION * MOCK_AUDIO_SAMPLE_RATE;
 
 global.window.AudioContext = jest.fn().mockImplementation(() => {

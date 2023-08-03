@@ -1,39 +1,260 @@
 import React from "react";
-import { describe, expect, test } from "@jest/globals";
+import { expect, test } from "@jest/globals";
 import "@testing-library/jest-dom";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import VoicemailPlayer from "./VoicemailPlayer";
 
 import "./mocks/mockAudioContext";
 import "./mocks/mockHtmlMediaElement";
+import "./mocks/mockResizeObserver";
 
-let fetchMock;
+let fetchMock: jest.SpyInstance<ReturnType<typeof fetch>>;
 
 beforeAll(() => {
   fetchMock = jest.spyOn(window, "fetch");
 });
 
-describe("<VoicemailPlayer />", () => {
-  test("starts playing", async () => {
-    fetchMock.mockResolvedValueOnce({
-      ok: true,
-      blob: async () => new global.window.Blob([], { type: "audio/mpeg" }),
-    });
+beforeEach(() => {
+  jest.useFakeTimers();
+});
 
-    render(
-      <VoicemailPlayer>
-        {(ref) => (
-          <audio ref={ref} src={"http://example.coom/fake-audio.wav"}></audio>
-        )}
-      </VoicemailPlayer>
-    );
+afterEach(() => {
+  fetchMock.mockClear();
+  jest.runOnlyPendingTimers();
+  jest.useRealTimers();
+});
 
-    const playPauseBtn = await screen.findByLabelText(/Play/);
+afterAll(() => {
+  fetchMock.mockReset();
+});
 
-    userEvent.click(playPauseBtn);
-    waitFor(async () =>
-      expect(await screen.findByLabelText(/Pause/)).toBeInTheDocument()
-    );
+function setup(audioDuration: number) {
+  fetchMock.mockResolvedValueOnce({
+    ok: true,
+    headers: new Headers(),
+    status: 200,
+    statusText: "OK",
+    blob: async () => new global.window.Blob([], { type: "audio/mpeg" }),
+  } as Response);
+
+  render(
+    <VoicemailPlayer>
+      {(ref) => (
+        <audio
+          ref={ref}
+          // mock HTMLMediaElement will read the duration from query string
+          // and set it as a property
+          src={`http://example.com/fake-audio.wav?duration=${audioDuration}`}
+        ></audio>
+      )}
+    </VoicemailPlayer>
+  );
+
+  act(() => {
+    global.window.simulateLoadAudioElements();
   });
+
+  return userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+}
+
+test("render", async () => {
+  const DURATION = 10;
+  setup(DURATION);
+  expect(
+    screen.getByLabelText("Play", { selector: "button" })
+  ).toBeInTheDocument();
+
+  const currentTime = screen.getByLabelText("Current time");
+  expect(currentTime.getAttribute("aria-valuenow")).toEqual("0");
+
+  expect(screen.getByText(`00:${DURATION}`)).toBeInTheDocument();
+});
+
+test("play", async () => {
+  const SECONDS_TO_PLAY = 5;
+  const DURATION = 20;
+  const user = setup(DURATION);
+
+  await user.click(
+    screen.getByLabelText("Play", {
+      selector: "button",
+    })
+  );
+
+  act(() =>
+    // mock audio element sends "timeupdate" events once a second;
+    // +1 is there to advance to the time just after expected number
+    // of events is fired
+    jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
+  );
+
+  expect(
+    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+  ).toBe(String(SECONDS_TO_PLAY));
+
+  expect(
+    screen.getByText(`00:${DURATION - SECONDS_TO_PLAY}`)
+  ).toBeInTheDocument();
+});
+
+test("pause", async () => {
+  const SECONDS_TO_PLAY = 5;
+  const SECONDS_TO_PAUSE_FOR = 10;
+  const DURATION = 20;
+  const user = setup(DURATION);
+
+  await user.click(
+    screen.getByLabelText("Play", {
+      selector: "button",
+    })
+  );
+
+  act(() =>
+    // mock audio element sends "timeupdate" events once a second;
+    // +1 is there to advance to the time just after expected number
+    // of events is fired
+    jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
+  );
+
+  await user.click(
+    screen.getByLabelText("Pause", {
+      selector: "button",
+    })
+  );
+
+  act(() => jest.advanceTimersByTime(SECONDS_TO_PAUSE_FOR * 1000 + 1));
+
+  expect(
+    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+  ).toBe(String(SECONDS_TO_PLAY));
+  expect(
+    screen.getByText(`00:${DURATION - SECONDS_TO_PLAY}`)
+  ).toBeInTheDocument();
+});
+
+test("stop when ended", async () => {
+  const DURATION = 10;
+  const SECONDS_TO_WAIT_AFTER_END = 5;
+  const user = setup(DURATION);
+
+  await user.click(
+    screen.getByLabelText("Play", {
+      selector: "button",
+    })
+  );
+
+  act(() =>
+    // mock audio element sends "timeupdate" events once a second;
+    // +1 is there to advance to the time just after expected number
+    // of events is fired
+    jest.advanceTimersByTime((DURATION + SECONDS_TO_WAIT_AFTER_END) * 1000 + 1)
+  );
+
+  expect(
+    screen.queryByLabelText("Pause", { selector: "button" })
+  ).not.toBeInTheDocument();
+  expect(
+    screen.queryByLabelText("Play", { selector: "button" })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+  ).toBe(String(DURATION));
+  expect(screen.getByText("00:00")).toBeInTheDocument();
+});
+
+test("play after ended", async () => {
+  const DURATION = 10;
+  const user = setup(DURATION);
+
+  await user.click(
+    screen.getByLabelText("Play", {
+      selector: "button",
+    })
+  );
+
+  act(() =>
+    // mock audio element sends "timeupdate" events once a second;
+    // +1 is there to advance to the time just after expected number
+    // of events is fired
+    jest.advanceTimersByTime(DURATION * 1000 + 1)
+  );
+
+  await user.click(
+    screen.getByLabelText("Play", {
+      selector: "button",
+    })
+  );
+
+  expect(
+    screen.queryByLabelText("Pause", { selector: "button" })
+  ).toBeInTheDocument();
+  expect(
+    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+  ).toBe(String(0));
+  expect(screen.getByText(`00:${DURATION}`)).toBeInTheDocument();
+});
+
+test("seek while paused", async () => {
+  const DURATION = 20;
+  const WIDTH = 200;
+  const user = setup(DURATION);
+
+  const meter = screen.getByRole("meter");
+  meter.getBoundingClientRect = jest.fn().mockReturnValue({
+    left: 0,
+    top: 0,
+    width: WIDTH,
+    height: 40,
+  });
+
+  await user.pointer({
+    keys: "[MouseLeft]",
+    target: screen.getByRole("meter"),
+    coords: { clientX: WIDTH / 2 },
+  });
+
+  expect(
+    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+  ).toBe(String(DURATION / 2));
+  expect(screen.queryByText(`00:${DURATION / 2}`)).toBeInTheDocument();
+});
+
+test("seek while playing", async () => {
+  const DURATION = 20;
+  const SECONDS_TO_PLAY = 15;
+  const WIDTH = 200;
+  const user = setup(DURATION);
+
+  await user.click(
+    screen.getByLabelText("Play", {
+      selector: "button",
+    })
+  );
+
+  act(() =>
+    // mock audio element sends "timeupdate" events once a second;
+    // +1 is there to advance to the time just after expected number
+    // of events is fired
+    jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
+  );
+
+  const meter = screen.getByRole("meter");
+  meter.getBoundingClientRect = jest.fn().mockReturnValue({
+    left: 0,
+    top: 0,
+    width: WIDTH,
+    height: 40,
+  });
+
+  await user.pointer({
+    keys: "[MouseLeft]",
+    target: screen.getByRole("meter"),
+    coords: { clientX: WIDTH / 2 },
+  });
+
+  expect(
+    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+  ).toBe(String(DURATION / 2));
+  expect(screen.queryByText(`00:${DURATION / 2}`)).toBeInTheDocument();
 });
