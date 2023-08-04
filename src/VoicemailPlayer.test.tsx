@@ -65,7 +65,7 @@ test("render", async () => {
     screen.getByLabelText("Play", { selector: "button" })
   ).toBeInTheDocument();
 
-  const currentTime = screen.getByLabelText("Current time");
+  const currentTime = screen.getByLabelText("Current Time");
   expect(currentTime.getAttribute("aria-valuenow")).toEqual("0");
 
   expect(screen.getByText(`00:${DURATION}`)).toBeInTheDocument();
@@ -90,7 +90,7 @@ test("play", async () => {
   );
 
   expect(
-    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
   ).toBe(String(SECONDS_TO_PLAY));
 
   expect(
@@ -126,7 +126,7 @@ test("pause", async () => {
   act(() => jest.advanceTimersByTime(SECONDS_TO_PAUSE_FOR * 1000 + 1));
 
   expect(
-    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
   ).toBe(String(SECONDS_TO_PLAY));
   expect(
     screen.getByText(`00:${DURATION - SECONDS_TO_PLAY}`)
@@ -158,7 +158,7 @@ test("stop when ended", async () => {
     screen.queryByLabelText("Play", { selector: "button" })
   ).toBeInTheDocument();
   expect(
-    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
   ).toBe(String(DURATION));
   expect(screen.getByText("00:00")).toBeInTheDocument();
 });
@@ -190,7 +190,7 @@ test("play after ended", async () => {
     screen.queryByLabelText("Pause", { selector: "button" })
   ).toBeInTheDocument();
   expect(
-    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
   ).toBe(String(0));
   expect(screen.getByText(`00:${DURATION}`)).toBeInTheDocument();
 });
@@ -215,7 +215,7 @@ test("seek while paused", async () => {
   });
 
   expect(
-    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
   ).toBe(String(DURATION / 2));
   expect(screen.queryByText(`00:${DURATION / 2}`)).toBeInTheDocument();
 });
@@ -254,7 +254,7 @@ test("seek while playing", async () => {
   });
 
   expect(
-    screen.getByLabelText("Current time").getAttribute("aria-valuenow")
+    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
   ).toBe(String(DURATION / 2));
   expect(screen.queryByText(`00:${DURATION / 2}`)).toBeInTheDocument();
 });
