@@ -7,6 +7,10 @@ export interface AudioPeaksBarProps {
   progress: number;
 }
 
+const BAR_WIDTH = 2;
+const BAR_GAP = 1;
+const MIN_BAR_HEIGHT = 1;
+
 export default function AudioPeaksBar({
   audioElement,
   progress,
@@ -15,9 +19,7 @@ export default function AudioPeaksBar({
   const { width, height } = useElementSize(svgRef);
   const [audioData] = useAudioData(audioElement);
 
-  const barWidth = 2;
-  const barGap = 1;
-  const barCount = Math.round(width / (barWidth + barGap));
+  const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
   const peaks = useAudioPeaks(audioData, barCount);
 
   const { current: clipPathId } = useRef<string>(
@@ -27,19 +29,30 @@ export default function AudioPeaksBar({
   const renderBars = () => {
     const result = [];
     for (let i = 0; i < peaks.length; i++) {
-      const barHeight = Math.max(Math.floor(peaks[i] * height), 1);
-      const barX = i * (barWidth + barGap);
+      const barHeight = Math.max(Math.floor(peaks[i] * height), MIN_BAR_HEIGHT);
+      const barX = i * (BAR_WIDTH + BAR_GAP);
       const barY = height - barHeight;
+      // y coordinate of a bar that is just outside the canvas
+      const barOutsideY = height + barHeight - MIN_BAR_HEIGHT;
 
       result.push(
         <rect
           key={i}
           x={barX}
           y={barY}
-          width={barWidth}
+          width={BAR_WIDTH}
           height={barHeight}
           fill="transparent"
-        ></rect>
+        >
+          <animate
+            attributeName="y"
+            // MIN_BAR_HEIGHT pixels of the bar should always be visible
+            from={barOutsideY - MIN_BAR_HEIGHT}
+            to={barY}
+            dur="250ms"
+            repeatCount="1"
+          />
+        </rect>
       );
     }
     return result;
