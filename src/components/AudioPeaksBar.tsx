@@ -1,6 +1,6 @@
 import React, { useRef, useLayoutEffect, useState, RefObject } from "react";
-import useAudioPeaks from "./hooks/useAudioPeaks";
-import useAudioData from "./hooks/useAudioData";
+import useAudioPeaks from "../hooks/useAudioPeaks";
+import useAudioData from "../hooks/useAudioData";
 
 export interface AudioPeaksBarProps {
   audioElement: HTMLAudioElement | null;

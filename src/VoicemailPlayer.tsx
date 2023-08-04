@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import useAudioPlayback from "./hooks/useAudioPlayback";
-import AudioPeaksBar from "./AudioPeaksBar";
+import AudioPeaksBar from "./components/AudioPeaksBar";
 import { PlayIcon, PauseIcon } from "./components/icons";
 
 export interface VoicemailPlayerProps {
