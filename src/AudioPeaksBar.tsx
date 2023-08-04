@@ -23,7 +23,7 @@ export default function AudioPeaksBar({
   const peaks = useAudioPeaks(audioData, barCount);
 
   const { current: clipPathId } = useRef<string>(
-    Math.random().toString(36).substring(2)
+    `rvmp_clip_path_${Math.random().toString(36).substring(2)}`
   );
 
   const renderBars = () => {
