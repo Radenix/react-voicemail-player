@@ -5,6 +5,7 @@ import { PlayIcon, PauseIcon } from "./components/icons";
 
 export interface VoicemailPlayerProps {
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
+  className?: string;
 }
 
 /**
@@ -27,8 +28,13 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
   };
 
   const renderAudio = props.children;
+
+  let rootClassName = prefixClassName("root");
+  if (props.className) {
+    rootClassName = `${rootClassName} ${props.className}`;
+  }
   return (
-    <div className={prefixClassName("root")}>
+    <div className={rootClassName}>
       <button
         aria-label={playback.isPlaying ? "Pause" : "Play"}
         className={prefixClassName("playButton")}
