@@ -7,7 +7,7 @@ if (existsSync("dist")) {
 
 const COMMON_CONFIG = {
   bundle: true,
-  minify: false,
+  minify: true,
   sourcemap: true,
   target: [
     "chrome84",
