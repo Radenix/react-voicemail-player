@@ -1,7 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
-import "../src/VoicemailPlayer.css";
 import VoicemailPlayer from "../src/VoicemailPlayer";
-import "./App.css";
 
 export default function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");

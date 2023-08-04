@@ -112,5 +112,5 @@ function useElementSize(ref: RefObject<Element>) {
 }
 
 function prefixClassName(name: string) {
-  return `VoiceMessagePlayer-${name}`;
+  return `VoicemailPlayer-${name}`;
 }

@@ -4,8 +4,6 @@ import AudioPeaksBar from "./AudioPeaksBar";
 import PlayIcon from "./components/PlayIcon";
 import PauseIcon from "./components/PauseIcon";
 
-import "./VoicemailPlayer.css";
-
 export interface VoicemailPlayerProps {
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
 }
@@ -63,7 +61,7 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
 }
 
 function prefixClassName(name: string) {
-  return `VoiceMessagePlayer-${name}`;
+  return `VoicemailPlayer-${name}`;
 }
 
 function formatTime(timeInSeconds: number | null) {
