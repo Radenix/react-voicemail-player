@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import useAudioPlayback from "./hooks/useAudioPlayback";
 import AudioPeaksBar from "./AudioPeaksBar";
-import PlayIcon from "./components/PlayIcon";
-import PauseIcon from "./components/PauseIcon";
+import { PlayIcon, PauseIcon } from "./components/icons";
 
 export interface VoicemailPlayerProps {
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
@@ -35,7 +34,11 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
         className={prefixClassName("playButton")}
         onClick={playback.isPlaying ? commands.pause : commands.play}
       >
-        {playback.isPlaying ? <PauseIcon /> : <PlayIcon />}
+        {playback.isPlaying ? (
+          <PauseIcon className={prefixClassName("playButton-icon")} />
+        ) : (
+          <PlayIcon className={prefixClassName("playButton-icon")} />
+        )}
       </button>
       <div className={prefixClassName("content")}>
         <div

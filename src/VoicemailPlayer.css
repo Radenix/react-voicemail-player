@@ -19,7 +19,9 @@
   cursor: pointer;
 }
 
-.VoicemailPlayer-root .VoicemailPlayer-playButton > svg {
+.VoicemailPlayer-root
+  .VoicemailPlayer-playButton
+  .VoicemailPlayer-playButton-icon {
   fill: currentColor;
 }
 
