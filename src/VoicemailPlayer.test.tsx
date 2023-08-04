@@ -5,9 +5,9 @@ import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import VoicemailPlayer from "./VoicemailPlayer";
 
-import "./mocks/mockAudioContext";
-import "./mocks/mockHtmlMediaElement";
-import "./mocks/mockResizeObserver";
+import "./__mocks__/mockAudioContext";
+import "./__mocks__/mockHtmlMediaElement";
+import "./__mocks__/mockResizeObserver";
 
 let fetchMock: jest.SpyInstance<ReturnType<typeof fetch>>;
 
