@@ -46,14 +46,18 @@ export default function AudioPeaksBar({
   };
 
   return (
-    <svg className="rvmp-viz-container" ref={svgRef}>
+    <svg className={prefixClassName("peaks")} ref={svgRef}>
       <defs>
         <clipPath id={clipPathId}>{renderBars()}</clipPath>
       </defs>
       <g clipPath={`url(#${clipPathId})`}>
-        <rect className="rvmp-viz-bg" width={width} height={height}></rect>
         <rect
-          className="rvmp-viz-progress"
+          className={prefixClassName("peaks-bg")}
+          width={width}
+          height={height}
+        ></rect>
+        <rect
+          className={prefixClassName("peaks-progress")}
           x={progress * width - width}
           y="0"
           width={width}
@@ -92,4 +96,8 @@ function useElementSize(ref: RefObject<Element>) {
   }, []);
 
   return size;
+}
+
+function prefixClassName(name: string) {
+  return `VoiceMessagePlayer-${name}`;
 }

@@ -1,25 +1,28 @@
-.rvmp-root {
+.VoiceMessagePlayer-root {
+  --primary-color: #1992d4;
+  --secondary-color: #7a8998;
+
   display: flex;
   gap: 8px;
   font-size: 12px;
-  font-family: inherit;
 
-  .rvmp-play-pause-btn {
+  .VoiceMessagePlayer-playButton {
     flex: none;
     width: 40px;
     height: 40px;
     border-radius: 50%;
     color: #fff;
-    background: #1992d4;
+    background: var(--primary-color);
     border: none;
     padding: 8px;
+    cursor: pointer;
 
     & > svg {
       fill: currentColor;
     }
   }
 
-  .rvmp-main-content {
+  .VoiceMessagePlayer-content {
     min-width: 0;
     flex: auto;
     display: flex;
@@ -28,17 +31,17 @@
     gap: 4px;
   }
 
-  .rvmp-viz-container {
+  .VoiceMessagePlayer-peaks {
     display: block;
     width: 100%;
     height: 16px;
 
-    & .rvmp-viz-bg {
-      fill: #7a8998;
+    & .VoiceMessagePlayer-peaks-bg {
+      fill: var(--secondary-color);
     }
 
-    & .rvmp-viz-progress {
-      fill: #1992d4;
+    & .VoiceMessagePlayer-peaks-progress {
+      fill: var(--primary-color);
     }
   }
 }

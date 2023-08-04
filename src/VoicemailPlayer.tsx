@@ -31,21 +31,21 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
 
   const renderAudio = props.children;
   return (
-    <div className="rvmp-root">
+    <div className={prefixClassName("root")}>
       <button
         aria-label={playback.isPlaying ? "Pause" : "Play"}
-        className="rvmp-play-pause-btn"
+        className={prefixClassName("playButton")}
         onClick={playback.isPlaying ? commands.pause : commands.play}
       >
         {playback.isPlaying ? <PauseIcon /> : <PlayIcon />}
       </button>
-      <div className="rvmp-main-content">
+      <div className={prefixClassName("content")}>
         <div
           role="meter"
           aria-valuenow={playback.currentTime}
           aria-valuemax={playback.duration}
           aria-valuetext={formatTime(playback.currentTime)}
-          aria-label="Current time"
+          aria-label="Current Time"
           onClick={onMeterClick}
         >
           <AudioPeaksBar
@@ -53,13 +53,17 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
             progress={playback.progress}
           />
         </div>
-        <span role="timer" aria-label="Remaining time">
+        <span role="timer" aria-label="Remaining Time">
           {formatTime(playback.remainingTime)}
         </span>
       </div>
       {renderAudio(setAudioElement)}
     </div>
   );
+}
+
+function prefixClassName(name: string) {
+  return `VoiceMessagePlayer-${name}`;
 }
 
 function formatTime(timeInSeconds: number | null) {
