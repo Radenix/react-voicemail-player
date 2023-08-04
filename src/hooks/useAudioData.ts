@@ -25,7 +25,16 @@ export default function useAudioData(
 
     const abortController = new AbortController();
     fetch(audioUrl, { signal: abortController.signal })
-      .then((response) => response.arrayBuffer())
+      .then((response) => {
+        if (!response.ok) {
+          const message = `[react-voicemail-player]: failed to load audio at ${audioUrl}. The server responded with ${response.status}: ${response.statusText}`;
+          console.error(message);
+          setError(new Error(message));
+          return;
+        }
+
+        return response.arrayBuffer();
+      })
       .then((buffer) => {
         abortController.signal.throwIfAborted();
         return decodeAudioData(buffer);
@@ -36,12 +45,13 @@ export default function useAudioData(
       })
       .catch((err) => {
         if (err.name === "AbortError") {
-          console.log("[react-voicemail-player]: audio processing cancelled");
+          console.debug(
+            "[react-voicemail-player]: audio loading/decoding cancelled"
+          );
           return;
         }
         console.error(
-          "[react-voicemail-player]: failed to load or decode audio at " +
-            audioUrl,
+          `[react-voicemail-player]: failed to load or decode audio at ${audioUrl}`,
           err
         );
         setError(err);
