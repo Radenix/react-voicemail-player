@@ -1,5 +1,4 @@
-import React, { useCallback, useMemo } from "react";
-import { useSyncExternalStore } from "use-sync-external-store/shim";
+import { useCallback, useMemo, useSyncExternalStore } from "react";
 import { AudioPlaybackState, AudioPlaybackCommands } from "../audio-playback";
 
 /**
