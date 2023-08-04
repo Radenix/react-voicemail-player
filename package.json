@@ -5,7 +5,9 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "esbuild example/index.tsx --bundle --outdir=example/dist --servedir=example/ --serve --watch",
-    "test": "jest"
+    "build": "node ./scripts/build.mjs",
+    "test": "jest",
+    "type-check": "tsc --noEmit"
   },
   "repository": {
     "type": "git",
@@ -14,8 +16,8 @@
   "keywords": [
     "react",
     "voice",
+    "voicemail",
     "audio",
-    "message",
     "player"
   ],
   "author": "Vadym Avdieiev",

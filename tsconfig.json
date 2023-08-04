@@ -1,10 +1,11 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "module": "AMD",
+    "module": "None",
     "jsx": "react",
     "moduleResolution": "Node",
     "esModuleInterop": true,
+    "isolatedModules": true,
     "baseUrl": "."
   },
   "include": ["src/", "example/"]
