@@ -24,3 +24,7 @@
   gap: 18px;
   padding: 18px;
 }
+
+.orange-player {
+  --primary-color: orange;
+}
