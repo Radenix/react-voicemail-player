@@ -1,5 +1,10 @@
 import { useCallback, useMemo, useSyncExternalStore } from "react";
-import { AudioPlaybackState, AudioPlaybackCommands } from "../audio-playback";
+import {
+  AudioPlaybackState,
+  AudioPlaybackCommands,
+  createCommands,
+  listenForChanges,
+} from "../audio-playback";
 
 /**
  * Starts listening to changes to the audio element, making a new snapshot of
@@ -15,23 +20,7 @@ export default function useAudioPlayback(
         return () => {};
       }
 
-      const eventNames = [
-        "loadedmetadata",
-        "play",
-        "pause",
-        "ended",
-        "timeupdate",
-        "durationchange",
-      ];
-      eventNames.forEach((name) =>
-        audioElement.addEventListener(name, callback)
-      );
-
-      return () => {
-        eventNames.forEach((name) =>
-          audioElement.removeEventListener(name, callback)
-        );
-      };
+      listenForChanges(audioElement, callback);
     },
     [audioElement]
   );
@@ -62,21 +51,7 @@ export default function useAudioPlayback(
     () => AudioPlaybackState.EMPTY
   );
 
-  const commands = useMemo(() => {
-    return {
-      play() {
-        audioElement.play();
-      },
-
-      pause() {
-        audioElement.pause();
-      },
-
-      seek(time: number) {
-        audioElement.currentTime = time;
-      },
-    };
-  }, [audioElement]);
+  const commands = useMemo(() => createCommands(audioElement), [audioElement]);
 
   return [state, commands];
 }

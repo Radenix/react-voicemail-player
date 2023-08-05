@@ -17,6 +17,7 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
     null
   );
   const [playback, commands] = useAudioPlayback(audioElement);
+  const isPlaying = playback.status === "playing";
 
   const onMeterClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -36,11 +37,11 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
   return (
     <div className={rootClassName}>
       <button
-        aria-label={playback.isPlaying ? "Pause" : "Play"}
+        aria-label={isPlaying ? "Pause" : "Play"}
         className={prefixClassName("playButton")}
-        onClick={playback.isPlaying ? commands.pause : commands.play}
+        onClick={isPlaying ? commands.pause : commands.play}
       >
-        {playback.isPlaying ? (
+        {isPlaying ? (
           <PauseIcon className={prefixClassName("playButton-icon")} />
         ) : (
           <PlayIcon className={prefixClassName("playButton-icon")} />

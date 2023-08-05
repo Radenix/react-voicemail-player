@@ -10,6 +10,8 @@ interface HTMLMediaElement {
     duration: number;
     currentTime: number;
     ended: boolean;
+    networkState: number;
+    readyState: number;
 
     // mock helpers
     _timeUpdateIntervalId?: number;
@@ -25,6 +27,8 @@ global.window.HTMLMediaElement.prototype._mock = {
   duration: NaN,
   currentTime: 0,
   ended: false,
+  networkState: HTMLMediaElement.NETWORK_EMPTY,
+  readyState: HTMLMediaElement.HAVE_NOTHING,
   // Copies the mock properties from the prototype onto the instance,
   // and dispatches events that fire during data load in a browser
   _simulateLoad: (audio) => {
@@ -34,6 +38,8 @@ global.window.HTMLMediaElement.prototype._mock = {
     );
     const url = new URL(audio.src);
     audio._mock.duration = Number(url.searchParams.get("duration") || 0);
+    audio._mock.networkState = HTMLMediaElement.NETWORK_IDLE;
+    audio._mock.readyState = HTMLMediaElement.HAVE_ENOUGH_DATA;
     audio.dispatchEvent(new Event("loadstart"));
     audio.dispatchEvent(new Event("loadedmetadata"));
     audio.dispatchEvent(new Event("canplaythrough"));
@@ -93,6 +99,22 @@ Object.defineProperties(global.window.HTMLMediaElement.prototype, {
     set(val) {
       this._mock.currentTime = val;
       this.dispatchEvent(new Event("timeupdate"));
+    },
+  },
+  networkState: {
+    get() {
+      return this._mock.networkState;
+    },
+    set(val) {
+      this._mock.networkState = val;
+    },
+  },
+  readyState: {
+    get() {
+      return this._mock.readyState;
+    },
+    set(val) {
+      this._mock.readyState = val;
     },
   },
 });
