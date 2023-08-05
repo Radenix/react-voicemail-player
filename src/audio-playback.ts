@@ -4,7 +4,7 @@ export interface AudioPlaybackCommands {
   seek: (time: number) => void;
 }
 
-type AudioPlaybackStatus =
+export type AudioPlaybackStatus =
   | "empty" // no source selected
   | "loading" // source selected, loading data
   | "error" // error loading the resource

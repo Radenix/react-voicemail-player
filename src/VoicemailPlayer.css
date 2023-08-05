@@ -1,6 +1,7 @@
 .VoicemailPlayer-root {
   --primary-color: #1992d4;
   --secondary-color: #7a8998;
+  --disabled-color: #a8aaaa;
 
   display: flex;
   gap: 8px;
@@ -25,6 +26,16 @@
   fill: currentColor;
 }
 
+.VoicemailPlayer-root--empty .VoicemailPlayer-playButton,
+.VoicemailPlayer-root--error .VoicemailPlayer-playButton {
+  cursor: not-allowed;
+  background: var(--disabled-color);
+}
+
+.VoicemailPlayer-root--loading .VoicemailPlayer-playButton {
+  cursor: wait;
+}
+
 .VoicemailPlayer-root .VoicemailPlayer-content {
   min-width: 0;
   flex: auto;
@@ -42,6 +53,11 @@
 
 .VoicemailPlayer-root .VoicemailPlayer-peaks .VoicemailPlayer-peaks-bg {
   fill: var(--secondary-color);
+}
+
+.VoicemailPlayer-root--empty .VoicemailPlayer-peaks .VoicemailPlayer-peaks-bg,
+.VoicemailPlayer-root--error .VoicemailPlayer-peaks .VoicemailPlayer-peaks-bg {
+  fill: var(--disabled-color);
 }
 
 .VoicemailPlayer-root .VoicemailPlayer-peaks .VoicemailPlayer-peaks-progress {

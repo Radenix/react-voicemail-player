@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import useAudioPlayback from "./hooks/useAudioPlayback";
 import AudioPeaksBar from "./components/AudioPeaksBar";
 import { PlayIcon, PauseIcon } from "./components/icons";
+import { AudioPlaybackStatus } from "./audio-playback";
 
 export interface VoicemailPlayerProps {
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
@@ -12,7 +13,10 @@ export interface VoicemailPlayerProps {
  * Given a function that renders an audio element as `children`, renders a UI
  * to visualize and control the audio playback
  */
-export default function VoicemailPlayer(props: VoicemailPlayerProps) {
+export default function VoicemailPlayer({
+  children,
+  className,
+}: VoicemailPlayerProps) {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
     null
   );
@@ -28,25 +32,28 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
     commands.seek(relativeX * playback.duration);
   };
 
-  const renderAudio = props.children;
+  const renderAudio = children;
 
-  let rootClassName = prefixClassName("root");
-  if (props.className) {
-    rootClassName = `${rootClassName} ${props.className}`;
-  }
   return (
-    <div className={rootClassName}>
-      <button
-        aria-label={isPlaying ? "Pause" : "Play"}
-        className={prefixClassName("playButton")}
-        onClick={isPlaying ? commands.pause : commands.play}
-      >
-        {isPlaying ? (
+    <div className={rootClassName(playback.status, className)}>
+      {playback.status === "playing" ? (
+        <button
+          aria-label="Pause"
+          className={prefixClassName("playButton")}
+          onClick={commands.pause}
+        >
           <PauseIcon className={prefixClassName("playButton-icon")} />
-        ) : (
+        </button>
+      ) : (
+        <button
+          aria-label="Play"
+          className={prefixClassName("playButton")}
+          onClick={commands.play}
+          disabled={playback.status !== "ready"}
+        >
           <PlayIcon className={prefixClassName("playButton-icon")} />
-        )}
-      </button>
+        </button>
+      )}
       <div className={prefixClassName("content")}>
         <div
           role="meter"
@@ -68,6 +75,16 @@ export default function VoicemailPlayer(props: VoicemailPlayerProps) {
       {renderAudio(setAudioElement)}
     </div>
   );
+}
+
+function rootClassName(status: AudioPlaybackStatus, userClassName?: string) {
+  return [
+    prefixClassName("root"),
+    prefixClassName("root--" + status),
+    userClassName,
+  ]
+    .filter(Boolean)
+    .join(" ");
 }
 
 function prefixClassName(name: string) {
