@@ -21,9 +21,8 @@ export default function VoicemailPlayer({
     null
   );
   const [playback, commands] = useAudioPlayback(audioElement);
-  const isPlaying = playback.status === "playing";
 
-  const onMeterClick = (
+  const onProgressClick = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => {
     const bbox = event.currentTarget.getBoundingClientRect();
@@ -55,22 +54,19 @@ export default function VoicemailPlayer({
         </button>
       )}
       <div className={prefixClassName("content")}>
-        <div
-          role="meter"
-          aria-valuenow={playback.currentTime}
-          aria-valuemax={playback.duration}
-          aria-valuetext={formatTime(playback.currentTime)}
-          aria-label="Current Time"
-          onClick={onMeterClick}
-        >
+        <div role="presentation" onClick={onProgressClick}>
           <AudioPeaksBar
             audioElement={audioElement}
             progress={playback.progress}
           />
         </div>
-        <span role="timer" aria-label="Remaining Time">
-          {formatTime(playback.remainingTime)}
-        </span>
+        <div>
+          <span role="timer" aria-label="Current Time">
+            {formatTime(playback.currentTime)}
+          </span>
+          &nbsp;/&nbsp;
+          <span aria-label="Duration">{formatTime(playback.duration)}</span>
+        </div>
       </div>
       {renderAudio(setAudioElement)}
     </div>
@@ -92,13 +88,7 @@ function prefixClassName(name: string) {
 }
 
 function formatTime(timeInSeconds: number | null) {
-  if (timeInSeconds === null) {
-    return "--:--";
-  }
-
-  const minutes = Math.floor(timeInSeconds / 60)
-    .toString()
-    .padStart(2, "0");
+  const minutes = Math.floor(timeInSeconds / 60).toString();
   const seconds = Math.floor(timeInSeconds % 60)
     .toString()
     .padStart(2, "0");

@@ -65,10 +65,10 @@ test("render", async () => {
     screen.getByLabelText("Play", { selector: "button" })
   ).toBeInTheDocument();
 
-  const currentTime = screen.getByLabelText("Current Time");
-  expect(currentTime.getAttribute("aria-valuenow")).toEqual("0");
+  expect(screen.queryByRole("timer")).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toEqual("0:00");
 
-  expect(screen.getByText(`00:${DURATION}`)).toBeInTheDocument();
+  expect(screen.queryByText(`0:${DURATION}`)).toBeInTheDocument();
 });
 
 test("play", async () => {
@@ -89,13 +89,7 @@ test("play", async () => {
     jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
-  expect(
-    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
-  ).toBe(String(SECONDS_TO_PLAY));
-
-  expect(
-    screen.getByText(`00:${DURATION - SECONDS_TO_PLAY}`)
-  ).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toBe(`0:0${SECONDS_TO_PLAY}`);
 });
 
 test("pause", async () => {
@@ -125,12 +119,7 @@ test("pause", async () => {
 
   act(() => jest.advanceTimersByTime(SECONDS_TO_PAUSE_FOR * 1000 + 1));
 
-  expect(
-    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
-  ).toBe(String(SECONDS_TO_PLAY));
-  expect(
-    screen.getByText(`00:${DURATION - SECONDS_TO_PLAY}`)
-  ).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toBe(`0:0${SECONDS_TO_PLAY}`);
 });
 
 test("stop when ended", async () => {
@@ -157,10 +146,7 @@ test("stop when ended", async () => {
   expect(
     screen.queryByLabelText("Play", { selector: "button" })
   ).toBeInTheDocument();
-  expect(
-    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
-  ).toBe(String(DURATION));
-  expect(screen.getByText("00:00")).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION}`);
 });
 
 test("play after ended", async () => {
@@ -189,10 +175,7 @@ test("play after ended", async () => {
   expect(
     screen.queryByLabelText("Pause", { selector: "button" })
   ).toBeInTheDocument();
-  expect(
-    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
-  ).toBe(String(0));
-  expect(screen.getByText(`00:${DURATION}`)).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toBe("0:00");
 });
 
 test("seek while paused", async () => {
@@ -200,8 +183,8 @@ test("seek while paused", async () => {
   const WIDTH = 200;
   const user = setup(DURATION);
 
-  const meter = screen.getByRole("meter");
-  meter.getBoundingClientRect = jest.fn().mockReturnValue({
+  const progressBar = screen.getByRole("presentation");
+  progressBar.getBoundingClientRect = jest.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
@@ -210,14 +193,11 @@ test("seek while paused", async () => {
 
   await user.pointer({
     keys: "[MouseLeft]",
-    target: screen.getByRole("meter"),
+    target: progressBar,
     coords: { clientX: WIDTH / 2 },
   });
 
-  expect(
-    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
-  ).toBe(String(DURATION / 2));
-  expect(screen.queryByText(`00:${DURATION / 2}`)).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION / 2}`);
 });
 
 test("seek while playing", async () => {
@@ -239,8 +219,8 @@ test("seek while playing", async () => {
     jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
-  const meter = screen.getByRole("meter");
-  meter.getBoundingClientRect = jest.fn().mockReturnValue({
+  const progressBar = screen.getByRole("presentation");
+  progressBar.getBoundingClientRect = jest.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
@@ -249,12 +229,9 @@ test("seek while playing", async () => {
 
   await user.pointer({
     keys: "[MouseLeft]",
-    target: screen.getByRole("meter"),
+    target: progressBar,
     coords: { clientX: WIDTH / 2 },
   });
 
-  expect(
-    screen.getByLabelText("Current Time").getAttribute("aria-valuenow")
-  ).toBe(String(DURATION / 2));
-  expect(screen.queryByText(`00:${DURATION / 2}`)).toBeInTheDocument();
+  expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION / 2}`);
 });
