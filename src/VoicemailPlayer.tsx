@@ -22,12 +22,7 @@ export default function VoicemailPlayer({
   );
   const [playback, commands] = useAudioPlayback(audioElement);
 
-  const onProgressClick = (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
-  ) => {
-    const bbox = event.currentTarget.getBoundingClientRect();
-    const offsetX = event.clientX - bbox.left;
-    const relativeX = offsetX / bbox.width;
+  const onPeakBarClick = (relativeX: number) => {
     commands.seek(relativeX * playback.duration);
   };
 
@@ -54,12 +49,11 @@ export default function VoicemailPlayer({
         </button>
       )}
       <div className={prefixClassName("content")}>
-        <div role="presentation" onClick={onProgressClick}>
-          <AudioPeaksBar
-            audioElement={audioElement}
-            progress={playback.progress}
-          />
-        </div>
+        <AudioPeaksBar
+          audioElement={audioElement}
+          progress={playback.progress}
+          onClick={onPeakBarClick}
+        />
         <div>
           <span role="timer" aria-label="Current Time">
             {formatTime(playback.currentTime)}

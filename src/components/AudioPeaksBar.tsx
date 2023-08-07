@@ -1,22 +1,31 @@
-import React, { useRef, useLayoutEffect, useState, RefObject } from "react";
+import React, {
+  useRef,
+  useLayoutEffect,
+  useState,
+  RefObject,
+  memo,
+  useEffect,
+} from "react";
 import useAudioPeaks from "../hooks/useAudioPeaks";
 import useAudioData from "../hooks/useAudioData";
 
 export interface AudioPeaksBarProps {
   audioElement: HTMLAudioElement | null;
   progress: number;
+  onClick: (relativeX: number) => void;
 }
 
 const BAR_WIDTH = 2;
 const BAR_GAP = 1;
 const MIN_BAR_HEIGHT = 1;
 
-export default function AudioPeaksBar({
+export default memo(function AudioPeaksBar({
   audioElement,
   progress,
+  onClick,
 }: AudioPeaksBarProps) {
-  const svgRef = useRef<SVGSVGElement>();
-  const { width, height } = useElementSize(svgRef);
+  const containerRef = useRef<HTMLDivElement>();
+  const { width, height } = useElementSize(containerRef);
   const [audioData] = useAudioData(audioElement);
 
   const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
@@ -25,6 +34,10 @@ export default function AudioPeaksBar({
   const { current: clipPathId } = useRef<string>(
     `rvmp_clip_path_${Math.random().toString(36).substring(2)}`
   );
+
+  const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    onClick(event.nativeEvent.offsetX / width);
+  };
 
   const renderBars = () => {
     const result = [];
@@ -59,30 +72,34 @@ export default function AudioPeaksBar({
   };
 
   return (
-    <svg className={prefixClassName("peaks")} ref={svgRef}>
-      <defs>
-        <clipPath id={clipPathId}>{renderBars()}</clipPath>
-      </defs>
-      <g clipPath={`url(#${clipPathId})`}>
-        <rect
-          className={prefixClassName("peaks-bg")}
-          width={width}
-          height={height}
-        ></rect>
-        <rect
-          className={prefixClassName("peaks-progress")}
-          x={progress * width - width}
-          y="0"
-          width={width}
-          height={height}
-        />
-      </g>
-    </svg>
+    <div onClick={handleClick} ref={containerRef}>
+      <svg className={prefixClassName("peaks")}>
+        <defs>
+          <clipPath id={clipPathId}>{renderBars()}</clipPath>
+        </defs>
+        <g clipPath={`url(#${clipPathId})`}>
+          <rect
+            className={prefixClassName("peaks-bg")}
+            width={width}
+            height={height}
+          ></rect>
+          <rect
+            className={prefixClassName("peaks-progress")}
+            x={progress * width - width}
+            y="0"
+            width={width}
+            height={height}
+          />
+        </g>
+      </svg>
+    </div>
   );
-}
+});
 
-function useElementSize(ref: RefObject<Element>) {
-  const [size, setSize] = useState<{ width: number; height: number }>({
+type Size = { width: number; height: number };
+
+function useElementSize(ref: RefObject<HTMLElement>): Size {
+  const [size, setSize] = useState<Size>({
     width: 0,
     height: 0,
   });
@@ -90,7 +107,9 @@ function useElementSize(ref: RefObject<Element>) {
   useLayoutEffect(() => {
     const bbox = ref.current.getBoundingClientRect();
     setSize({ width: bbox.width, height: bbox.height });
+  }, []);
 
+  useEffect(() => {
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       let w, h;
