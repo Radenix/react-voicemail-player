@@ -28,3 +28,14 @@
 .orange-player {
   --primary-color: orange;
 }
+
+.my-player-wrapper {
+  width: 350px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.my-player-wrapper select {
+  flex: none;
+}

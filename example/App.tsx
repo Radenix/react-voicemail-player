@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect, useEffect } from "react";
+import React, { useState, useLayoutEffect, useEffect, useRef } from "react";
 import VoicemailPlayer from "../src/VoicemailPlayer";
 
 export default function App() {
@@ -24,21 +24,21 @@ export default function App() {
         </select>
       </div>
       <div className="example-container">
-        <ExampleWithSrc />
-        <ExampleWithMultipleSources />
-        <ExampleWithDynamicallyLoadedAudio />
-        <ExampleWithLocalFileAudio />
+        <Basic />
+        <MultiSource />
+        <MuteUnmute />
+        <PlaybackSpeed />
+        <CustomStyle />
+        <LocalFileAudio />
       </div>
     </div>
   );
 }
 
-function ExampleWithSrc() {
+function Basic() {
   return (
     <>
-      <h3>
-        Audio with <code>src</code> attribute
-      </h3>
+      <h3>Basic</h3>
 
       <VoicemailPlayer>
         {(audioRef) => <audio ref={audioRef} src="/audio/long.mp3" />}
@@ -47,7 +47,7 @@ function ExampleWithSrc() {
   );
 }
 
-function ExampleWithMultipleSources() {
+function MultiSource() {
   return (
     <>
       <h3>
@@ -65,20 +65,78 @@ function ExampleWithMultipleSources() {
   );
 }
 
-function ExampleWithDynamicallyLoadedAudio() {
-  const remoteBlobUrl = useBlobUrl(useRemoteBlob("/audio/short.mp3"));
+function MuteUnmute() {
+  const [isMuted, setIsMuted] = useState(false);
 
   return (
     <>
-      <h3>Dynamically loaded audio</h3>
-      <VoicemailPlayer className="orange-player">
-        {(audioRef) => <audio ref={audioRef} src={remoteBlobUrl} />}
+      <h3>
+        Controlling <code>mute</code> attribute
+      </h3>
+      <button onClick={() => setIsMuted((muted) => !muted)}>
+        {isMuted ? "Unmute" : "Mute"}
+      </button>
+      <VoicemailPlayer>
+        {(audioRef) => (
+          <audio ref={audioRef} src="/audio/long.mp3" muted={isMuted} />
+        )}
       </VoicemailPlayer>
     </>
   );
 }
 
-function ExampleWithLocalFileAudio() {
+function PlaybackSpeed() {
+  const myAudioRef = useRef<HTMLAudioElement>(null);
+  const [speed, setSpeed] = useState<number>(1);
+
+  useEffect(() => {
+    myAudioRef.current.playbackRate = speed;
+  }, [speed]);
+
+  return (
+    <>
+      <h3>Controlling playback speed</h3>
+      <div className="my-player-wrapper">
+        <VoicemailPlayer>
+          {(setAudioNode) => (
+            <audio
+              ref={(node) => {
+                setAudioNode(node);
+                myAudioRef.current = node;
+              }}
+              src="/audio/long.mp3"
+            />
+          )}
+        </VoicemailPlayer>
+        <select
+          value={String(speed)}
+          onChange={(event) => {
+            setSpeed(Number(event.currentTarget.value));
+          }}
+        >
+          <option value="0.75">0.75</option>
+          <option value="1">1</option>
+          <option value="1.5">1.5</option>
+          <option value="2">2</option>
+        </select>
+      </div>
+    </>
+  );
+}
+
+function CustomStyle() {
+  return (
+    <>
+      <h3>Basic</h3>
+
+      <VoicemailPlayer className="orange-player">
+        {(audioRef) => <audio ref={audioRef} src="/audio/short.mp3" />}
+      </VoicemailPlayer>
+    </>
+  );
+}
+
+function LocalFileAudio() {
   const [localFile, setLocalFile] = useState<File | null>(null);
   const localFileUrl = useBlobUrl(localFile);
 
@@ -96,26 +154,6 @@ function ExampleWithLocalFileAudio() {
       </VoicemailPlayer>
     </>
   );
-}
-
-function useRemoteBlob(source: string): Blob | null {
-  const [remoteBlob, setRemoteBlob] = useState<Blob | null>(null);
-  useEffect(() => {
-    fetch(source)
-      .then((response) => {
-        if (response.ok) {
-          return response.blob();
-        }
-        throw new Error(
-          `Failed to fetch from ${source}. Response was ${response.status} ${response.statusText}`
-        );
-      })
-      .then((blob) => {
-        setRemoteBlob(blob);
-      });
-  }, [source]);
-
-  return remoteBlob;
 }
 
 function useBlobUrl(blob: Blob | null): string | null {
