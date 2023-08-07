@@ -36,7 +36,10 @@ export default memo(function AudioPeaksBar({
   );
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    onClick(event.nativeEvent.offsetX / width);
+    const bbox = event.currentTarget.getBoundingClientRect();
+    const offsetX = event.clientX - bbox.left;
+    const relativeX = offsetX / bbox.width;
+    onClick(relativeX);
   };
 
   const renderBars = () => {
@@ -72,7 +75,7 @@ export default memo(function AudioPeaksBar({
   };
 
   return (
-    <div onClick={handleClick} ref={containerRef}>
+    <div data-testid="peaks-bar" onClick={handleClick} ref={containerRef}>
       <svg className={prefixClassName("peaks")}>
         <defs>
           <clipPath id={clipPathId}>{renderBars()}</clipPath>

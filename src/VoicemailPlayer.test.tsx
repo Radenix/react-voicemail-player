@@ -183,8 +183,8 @@ test("seek while paused", async () => {
   const WIDTH = 200;
   const user = setup(DURATION);
 
-  const progressBar = screen.getByRole("presentation");
-  progressBar.getBoundingClientRect = jest.fn().mockReturnValue({
+  const peaksBar = screen.getByTestId("peaks-bar");
+  peaksBar.getBoundingClientRect = jest.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
@@ -193,7 +193,7 @@ test("seek while paused", async () => {
 
   await user.pointer({
     keys: "[MouseLeft]",
-    target: progressBar,
+    target: peaksBar,
     coords: { clientX: WIDTH / 2 },
   });
 
@@ -219,8 +219,8 @@ test("seek while playing", async () => {
     jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
-  const progressBar = screen.getByRole("presentation");
-  progressBar.getBoundingClientRect = jest.fn().mockReturnValue({
+  const peaksBar = screen.getByTestId("peaks-bar");
+  peaksBar.getBoundingClientRect = jest.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
@@ -229,7 +229,7 @@ test("seek while playing", async () => {
 
   await user.pointer({
     keys: "[MouseLeft]",
-    target: progressBar,
+    target: peaksBar,
     coords: { clientX: WIDTH / 2 },
   });
 
