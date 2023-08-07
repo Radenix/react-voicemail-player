@@ -28,6 +28,22 @@ export default function VoicemailPlayer({
 
   const renderAudio = children;
 
+  const renderStatus = () => {
+    if (playback.status === "error") {
+      return <span title={playback.error.message}>Error</span>;
+    }
+
+    return (
+      <>
+        <span role="timer" aria-label="Current Time">
+          {formatTime(playback.currentTime)}
+        </span>
+        &nbsp;/&nbsp;
+        <span aria-label="Duration">{formatTime(playback.duration)}</span>
+      </>
+    );
+  };
+
   return (
     <div className={rootClassName(playback.status, className)}>
       {playback.status === "playing" ? (
@@ -54,13 +70,7 @@ export default function VoicemailPlayer({
           progress={playback.progress}
           onClick={onPeakBarClick}
         />
-        <div>
-          <span role="timer" aria-label="Current Time">
-            {formatTime(playback.currentTime)}
-          </span>
-          &nbsp;/&nbsp;
-          <span aria-label="Duration">{formatTime(playback.duration)}</span>
-        </div>
+        <div>{renderStatus()}</div>
       </div>
       {renderAudio(setAudioElement)}
     </div>
