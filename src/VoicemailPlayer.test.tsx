@@ -71,6 +71,11 @@ test("render", async () => {
   expect(screen.queryByText(`0:${DURATION}`)).toBeInTheDocument();
 });
 
+test("render with unknown duration", async () => {
+  setup(NaN);
+  expect(screen.queryByText("-:--")).toBeInTheDocument();
+});
+
 test("play", async () => {
   const SECONDS_TO_PLAY = 5;
   const DURATION = 20;

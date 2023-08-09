@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useAudioPlayback from "./hooks/useAudioPlayback";
 import AudioPeaksBar from "./components/AudioPeaksBar";
 import { PlayIcon, PauseIcon } from "./components/icons";
-import { AudioPlaybackStatus } from "./audio-playback";
+import { AudioPlaybackState, AudioPlaybackStatus } from "./audio-playback";
 
 export interface VoicemailPlayerProps {
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
@@ -23,6 +23,9 @@ export default function VoicemailPlayer({
   const [playback, commands] = useAudioPlayback(audioElement);
 
   const onPeakBarClick = (relativeX: number) => {
+    if (playback.isDurationUnknown) {
+      return;
+    }
     commands.seek(relativeX * playback.duration);
   };
 
@@ -39,7 +42,7 @@ export default function VoicemailPlayer({
           {formatTime(playback.currentTime)}
         </span>
         &nbsp;/&nbsp;
-        <span aria-label="Duration">{formatTime(playback.duration)}</span>
+        <span aria-label="Duration">{formatDuration(playback)}</span>
       </>
     );
   };
@@ -91,7 +94,14 @@ function prefixClassName(name: string) {
   return `VoicemailPlayer-${name}`;
 }
 
-function formatTime(timeInSeconds: number | null) {
+function formatDuration(playback: AudioPlaybackState) {
+  if (playback.isDurationUnknown) {
+    return "-:--";
+  }
+  return formatTime(playback.duration);
+}
+
+function formatTime(timeInSeconds: number) {
   const minutes = Math.floor(timeInSeconds / 60).toString();
   const seconds = Math.floor(timeInSeconds % 60)
     .toString()

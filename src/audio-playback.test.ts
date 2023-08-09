@@ -5,9 +5,9 @@ test("get state from empty audio", () => {
   const audio = new Audio();
   const result = AudioPlaybackState.fromAudioElement(audio);
   expect(result.error).toBeFalsy();
-  expect(result.duration).toBe(0);
+  expect(result.duration).toBe(NaN);
+  expect(result.isDurationUnknown).toBe(true);
   expect(result.currentTime).toBe(0);
-  expect(result.remainingTime).toBe(0);
   expect(result.progress).toBe(0);
   expect(result.status).toBe("empty");
 });
@@ -19,9 +19,9 @@ test("get state from errored audio", () => {
 
   const result = AudioPlaybackState.fromAudioElement(audio);
   expect(result.error).toBe(expectedError);
-  expect(result.duration).toBe(0);
+  expect(result.duration).toBe(NaN);
+  expect(result.isDurationUnknown).toBe(true);
   expect(result.currentTime).toBe(0);
-  expect(result.remainingTime).toBe(0);
   expect(result.progress).toBe(0);
   expect(result.status).toBe("error");
 });
@@ -39,9 +39,9 @@ test("get state from loading audio", () => {
 
   const result = AudioPlaybackState.fromAudioElement(audio);
   expect(result.error).toBeFalsy();
-  expect(result.duration).toBe(0);
+  expect(result.duration).toBe(NaN);
+  expect(result.isDurationUnknown).toBe(true);
   expect(result.currentTime).toBe(0);
-  expect(result.remainingTime).toBe(0);
   expect(result.progress).toBe(0);
   expect(result.status).toBe("loading");
 });
@@ -55,13 +55,14 @@ test("get state from loading audio that can play through", () => {
     networkState: {
       value: HTMLMediaElement.NETWORK_LOADING,
     },
+    duration: { value: 60 },
   });
 
   const result = AudioPlaybackState.fromAudioElement(audio);
   expect(result.error).toBeFalsy();
-  expect(result.duration).toBe(0);
+  expect(result.duration).toBe(60);
+  expect(result.isDurationUnknown).toBe(false);
   expect(result.currentTime).toBe(0);
-  expect(result.remainingTime).toBe(0);
   expect(result.progress).toBe(0);
   expect(result.status).toBe("ready");
 });
@@ -85,7 +86,6 @@ test("get state from playing audio", () => {
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
   expect(result.currentTime).toBe(15);
-  expect(result.remainingTime).toBe(45);
   expect(result.progress).toBeCloseTo(0.25);
   expect(result.status).toBe("playing");
 });
@@ -108,8 +108,8 @@ test("get state from paused audio", () => {
   const result = AudioPlaybackState.fromAudioElement(audio);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
+  expect(result.isDurationUnknown).toBe(false);
   expect(result.currentTime).toBe(45);
-  expect(result.remainingTime).toBe(15);
   expect(result.progress).toBeCloseTo(0.75);
   expect(result.status).toBe("ready");
 });
@@ -133,7 +133,6 @@ test("get state from ended audio", () => {
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
   expect(result.currentTime).toBe(60);
-  expect(result.remainingTime).toBe(0);
   expect(result.progress).toBeCloseTo(1);
   expect(result.status).toBe("ready");
 });
@@ -161,10 +160,27 @@ test("command pause", () => {
 test("command seek", () => {
   const audio = new Audio();
   const setCurrentTimeMock = jest.fn();
-  Object.defineProperty(audio, "currentTime", { set: setCurrentTimeMock });
+  Object.defineProperties(audio, {
+    currentTime: { set: setCurrentTimeMock },
+    duration: { value: 60 },
+  });
 
   const commands = createCommands(audio);
   commands.seek(42);
 
   expect(setCurrentTimeMock).toHaveBeenCalledWith(42);
+});
+
+test("command seek with unknown duration", () => {
+  const audio = new Audio();
+  const setCurrentTimeMock = jest.fn();
+  Object.defineProperties(audio, {
+    currentTime: { set: setCurrentTimeMock },
+    duration: { value: Number.POSITIVE_INFINITY },
+  });
+
+  const commands = createCommands(audio);
+  commands.seek(42);
+
+  expect(setCurrentTimeMock).not.toHaveBeenCalled();
 });

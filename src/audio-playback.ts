@@ -36,18 +36,25 @@ export class AudioPlaybackState {
     public readonly error: MediaError | null
   ) {}
 
-  get progress() {
-    return this.duration > 0 ? this.currentTime / this.duration : 0;
+  get isDurationUnknown() {
+    // If no media data is available, the duration is NaN.
+    // If the media doesn't have a known duration — such as for live media
+    // streams — the value of duration is +Infinity.
+    return !Number.isFinite(this.duration);
   }
 
-  get remainingTime() {
-    return this.duration - this.currentTime;
+  get progress() {
+    if (this.isDurationUnknown) {
+      return 0;
+    }
+
+    return this.duration > 0 ? this.currentTime / this.duration : 0;
   }
 
   static fromAudioElement(element: HTMLAudioElement) {
     return new AudioPlaybackState(
-      element.duration || 0,
-      element.currentTime || 0,
+      element.duration,
+      element.currentTime,
       statusFromAudioElement(element),
       element.error
     );
@@ -57,7 +64,7 @@ export class AudioPlaybackState {
     return (
       a.status === b.status &&
       areFloatsClose(a.currentTime, b.currentTime) &&
-      areFloatsClose(a.duration, b.duration)
+      areDurationsEqual(a, b)
     );
   }
 
@@ -88,7 +95,10 @@ export function createCommands(audioElement: HTMLAudioElement) {
     },
 
     seek(time: number) {
-      audioElement.currentTime = time;
+      if (!Number.isFinite(time) || !Number.isFinite(audioElement.duration)) {
+        return;
+      }
+      audioElement.currentTime = clamp(time, 0, audioElement.duration);
     },
   };
 }
@@ -115,7 +125,29 @@ function statusFromAudioElement(
   return "playing";
 }
 
+function areDurationsEqual(a: AudioPlaybackState, b: AudioPlaybackState) {
+  if (a.isDurationUnknown || b.isDurationUnknown) {
+    // if at least one of the durations is unknown,
+    // they can be equal only if both are unknown
+    return a.isDurationUnknown === b.isDurationUnknown;
+  }
+
+  return areFloatsClose(a.duration, b.duration);
+}
+
 function areFloatsClose(a: number, b: number, precision: number = 2) {
   const multiplier = Math.pow(10, precision);
   return Math.round(a * multiplier) === Math.round(b * multiplier);
+}
+
+function formatTime(time: number) {
+  const minutes = Math.floor(time / 60).toString();
+  const seconds = Math.floor(time % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function clamp(n: number, min: number, max: number) {
+  return Math.max(Math.min(n, max), min);
 }
