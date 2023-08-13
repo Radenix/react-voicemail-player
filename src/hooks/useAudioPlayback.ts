@@ -20,7 +20,7 @@ export default function useAudioPlayback(
         return () => {};
       }
 
-      listenForChanges(audioElement, callback);
+      return listenForChanges(audioElement, callback);
     },
     [audioElement]
   );

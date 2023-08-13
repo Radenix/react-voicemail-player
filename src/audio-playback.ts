@@ -40,6 +40,7 @@ export class AudioPlaybackState {
     // If no media data is available, the duration is NaN.
     // If the media doesn't have a known duration — such as for live media
     // streams — the value of duration is +Infinity.
+    // https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement/duration
     return !Number.isFinite(this.duration);
   }
 
