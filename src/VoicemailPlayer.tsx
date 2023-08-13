@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import useAudioPlayback from "./hooks/useAudioPlayback";
 import AudioPeaksBar from "./components/AudioPeaksBar";
 import { PlayIcon, PauseIcon } from "./components/icons";
-import { AudioPlaybackState, AudioPlaybackStatus } from "./audio-playback";
+import { AudioPlaybackStatus } from "./audio-playback";
 
 export interface VoicemailPlayerProps {
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
@@ -73,7 +73,7 @@ export default function VoicemailPlayer({
       )}
       <div className={prefixClassName("content")}>
         <AudioPeaksBar
-          audioElement={audioElement}
+          audioData={playback.data}
           progress={playback.progress}
           onClick={onPeakBarClick}
         />

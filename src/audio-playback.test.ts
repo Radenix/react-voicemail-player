@@ -3,7 +3,7 @@ import { AudioPlaybackState, createCommands } from "./audio-playback";
 
 test("get state from empty audio", () => {
   const audio = new Audio();
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(NaN);
   expect(result.isDurationUnknown).toBe(true);
@@ -17,7 +17,7 @@ test("get state from errored audio", () => {
   const expectedError = new Error();
   Object.defineProperty(audio, "error", { value: expectedError });
 
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBe(expectedError);
   expect(result.duration).toBe(NaN);
   expect(result.isDurationUnknown).toBe(true);
@@ -37,7 +37,7 @@ test("get state from loading audio", () => {
     },
   });
 
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(NaN);
   expect(result.isDurationUnknown).toBe(true);
@@ -58,7 +58,7 @@ test("get state from loading audio that can play through", () => {
     duration: { value: 60 },
   });
 
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
   expect(result.isDurationUnknown).toBe(false);
@@ -82,7 +82,7 @@ test("get state from playing audio", () => {
     ended: { value: false },
   });
 
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
   expect(result.currentTime).toBe(15);
@@ -105,7 +105,7 @@ test("get state from paused audio", () => {
     ended: { value: false },
   });
 
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
   expect(result.isDurationUnknown).toBe(false);
@@ -129,12 +129,31 @@ test("get state from ended audio", () => {
     ended: { value: true },
   });
 
-  const result = AudioPlaybackState.fromAudioElement(audio);
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, null);
   expect(result.error).toBeFalsy();
   expect(result.duration).toBe(60);
   expect(result.currentTime).toBe(60);
   expect(result.progress).toBeCloseTo(1);
   expect(result.status).toBe("ready");
+});
+
+test("get duration from data", () => {
+  const audio = new Audio();
+  Object.defineProperties(audio, {
+    readyState: {
+      value: HTMLMediaElement.HAVE_ENOUGH_DATA,
+    },
+    networkState: {
+      value: HTMLMediaElement.NETWORK_LOADING,
+    },
+    duration: { value: Number.POSITIVE_INFINITY },
+  });
+
+  const data = { duration: 30 } as AudioBuffer;
+
+  const result = AudioPlaybackState.fromAudioElementAndData(audio, data);
+  expect(result.duration).toBe(30);
+  expect(result.data).toBe(data);
 });
 
 test("command play", () => {

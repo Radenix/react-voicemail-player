@@ -33,7 +33,8 @@ export class AudioPlaybackState {
     public readonly duration: number,
     public readonly currentTime: number,
     public readonly status: AudioPlaybackStatus,
-    public readonly error: MediaError | null
+    public readonly error: MediaError | null,
+    public readonly data: AudioBuffer | null
   ) {}
 
   get isDurationUnknown() {
@@ -52,12 +53,21 @@ export class AudioPlaybackState {
     return this.duration > 0 ? this.currentTime / this.duration : 0;
   }
 
-  static fromAudioElement(element: HTMLAudioElement) {
+  static fromAudioElementAndData(
+    element: HTMLAudioElement,
+    data: AudioBuffer | null
+  ) {
+    let duration = element.duration;
+    if (!Number.isFinite(duration) && data?.duration) {
+      duration = data.duration;
+    }
+
     return new AudioPlaybackState(
-      element.duration,
+      duration,
       element.currentTime,
       statusFromAudioElement(element),
-      element.error
+      element.error,
+      data
     );
   }
 
@@ -65,11 +75,12 @@ export class AudioPlaybackState {
     return (
       a.status === b.status &&
       areFloatsClose(a.currentTime, b.currentTime) &&
-      areDurationsEqual(a, b)
+      areDurationsEqual(a, b) &&
+      a.data === b.data
     );
   }
 
-  static EMPTY = new AudioPlaybackState(0, 0, "empty", null);
+  static EMPTY = new AudioPlaybackState(0, 0, "empty", null, null);
 }
 
 export function listenForChanges(
@@ -139,14 +150,6 @@ function areDurationsEqual(a: AudioPlaybackState, b: AudioPlaybackState) {
 function areFloatsClose(a: number, b: number, precision: number = 2) {
   const multiplier = Math.pow(10, precision);
   return Math.round(a * multiplier) === Math.round(b * multiplier);
-}
-
-function formatTime(time: number) {
-  const minutes = Math.floor(time / 60).toString();
-  const seconds = Math.floor(time % 60)
-    .toString()
-    .padStart(2, "0");
-  return `${minutes}:${seconds}`;
 }
 
 function clamp(n: number, min: number, max: number) {

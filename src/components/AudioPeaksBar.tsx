@@ -7,10 +7,9 @@ import React, {
   useEffect,
 } from "react";
 import useAudioPeaks from "../hooks/useAudioPeaks";
-import useAudioData from "../hooks/useAudioData";
 
 export interface AudioPeaksBarProps {
-  audioElement: HTMLAudioElement | null;
+  audioData: AudioBuffer | null;
   progress: number;
   onClick: (relativeX: number) => void;
 }
@@ -20,13 +19,12 @@ const BAR_GAP = 1;
 const MIN_BAR_HEIGHT = 1;
 
 export default memo(function AudioPeaksBar({
-  audioElement,
+  audioData,
   progress,
   onClick,
 }: AudioPeaksBarProps) {
   const containerRef = useRef<HTMLDivElement>();
   const { width, height } = useElementSize(containerRef);
-  const [audioData] = useAudioData(audioElement);
 
   const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
   const peaks = useAudioPeaks(audioData, barCount);
