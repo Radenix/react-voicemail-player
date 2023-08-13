@@ -41,8 +41,12 @@ export default function VoicemailPlayer({
         <span role="timer" aria-label="Current Time">
           {formatTime(playback.currentTime)}
         </span>
-        &nbsp;/&nbsp;
-        <span aria-label="Duration">{formatDuration(playback)}</span>
+        {!playback.isDurationUnknown && (
+          <>
+            &nbsp;/&nbsp;
+            <span aria-label="Duration">{formatTime(playback.duration)}</span>
+          </>
+        )}
       </>
     );
   };
@@ -92,13 +96,6 @@ function rootClassName(status: AudioPlaybackStatus, userClassName?: string) {
 
 function prefixClassName(name: string) {
   return `VoicemailPlayer-${name}`;
-}
-
-function formatDuration(playback: AudioPlaybackState) {
-  if (playback.isDurationUnknown) {
-    return "-:--";
-  }
-  return formatTime(playback.duration);
 }
 
 function formatTime(timeInSeconds: number) {

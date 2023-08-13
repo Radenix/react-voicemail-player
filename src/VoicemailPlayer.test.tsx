@@ -73,7 +73,7 @@ test("render", async () => {
 
 test("render with unknown duration", async () => {
   setup(NaN);
-  expect(screen.queryByText("-:--")).toBeInTheDocument();
+  expect(screen.queryByLabelText("Duration")).not.toBeInTheDocument();
 });
 
 test("play", async () => {
