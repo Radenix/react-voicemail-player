@@ -2,6 +2,8 @@
 
 The audio player control for React that displays the audio's amplitude peaks. Loads and decodes the audio data in memory, so best suited for small audio files, like voicemail, hence the name. The use case I had in mind is chat-based apps where users can send voice messages. Inspired by audio player in the Telegram messenger.
 
+[Demo](https://local-longhaired-liquid.glitch.me/).
+
 Note, this is neither a powerful audio visualization library, nor a powerful audio player. If you need rich visualizations, I suggest [wavesurfer.js](https://wavesurfer-js.org/). If you look for a general-purpose audio player, check out [react-audio-player-pro](https://webbestmaster.github.io/react-audio-player-pro/).
 
 ## Installation
