@@ -99,9 +99,13 @@ function prefixClassName(name: string) {
 }
 
 function formatTime(timeInSeconds: number) {
-  const minutes = Math.floor(timeInSeconds / 60).toString();
-  const seconds = Math.floor(timeInSeconds % 60)
-    .toString()
-    .padStart(2, "0");
-  return `${minutes}:${seconds}`;
+  let minutes = Math.floor(timeInSeconds / 60);
+  let seconds = Math.round(timeInSeconds % 60);
+
+  if (seconds === 60) {
+    seconds = 0;
+    minutes += 1;
+  }
+
+  return `${minutes}:${String(seconds).padStart(2, "0")}`;
 }

@@ -76,6 +76,21 @@ test("render with unknown duration", async () => {
   expect(screen.queryByLabelText("Duration")).not.toBeInTheDocument();
 });
 
+test("render with rounded duration (2 seconds)", async () => {
+  setup(1.5);
+  expect(screen.queryByText("0:02")).toBeInTheDocument();
+});
+
+test("render with rounded duration (1 minute)", async () => {
+  setup(59.5);
+  expect(screen.queryByText("1:00")).toBeInTheDocument();
+});
+
+test("render with rounded duration (2 minutes)", async () => {
+  setup(119.5);
+  expect(screen.queryByText("2:00")).toBeInTheDocument();
+});
+
 test("play", async () => {
   const SECONDS_TO_PLAY = 5;
   const DURATION = 20;
