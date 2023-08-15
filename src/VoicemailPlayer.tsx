@@ -22,7 +22,7 @@ export default function VoicemailPlayer({
   );
   const [playback, commands] = useAudioPlayback(audioElement);
 
-  const onPeakBarClick = (relativeX: number) => {
+  const onProgressChange = (relativeX: number) => {
     if (playback.isDurationUnknown) {
       return;
     }
@@ -75,7 +75,7 @@ export default function VoicemailPlayer({
         <AudioPeaksBar
           audioData={playback.data}
           progress={playback.progress}
-          onClick={onPeakBarClick}
+          onProgressChange={onProgressChange}
         />
         <div>{renderStatus()}</div>
       </div>

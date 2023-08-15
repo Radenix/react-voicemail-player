@@ -212,9 +212,13 @@ test("seek while paused", async () => {
   });
 
   await user.pointer({
-    keys: "[MouseLeft]",
+    keys: "[MouseLeft>]",
     target: peaksBar,
     coords: { clientX: WIDTH / 2 },
+  });
+
+  act(() => {
+    document.dispatchEvent(new MouseEvent("pointerup"));
   });
 
   expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION / 2}`);
@@ -248,9 +252,45 @@ test("seek while playing", async () => {
   });
 
   await user.pointer({
-    keys: "[MouseLeft]",
+    keys: "[MouseLeft>]",
     target: peaksBar,
     coords: { clientX: WIDTH / 2 },
+  });
+
+  act(() => {
+    document.dispatchEvent(new MouseEvent("pointerup"));
+  });
+
+  expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION / 2}`);
+});
+
+test("seek by gragging", async () => {
+  const DURATION = 20;
+  const WIDTH = 200;
+  const user = setup(DURATION);
+
+  const peaksBar = screen.getByTestId("peaks-bar");
+  peaksBar.getBoundingClientRect = jest.fn().mockReturnValue({
+    left: 0,
+    top: 0,
+    width: WIDTH,
+    height: 40,
+  });
+
+  await user.pointer({
+    keys: "[MouseLeft>]",
+    target: peaksBar,
+    coords: { clientX: 0 },
+  });
+
+  act(() => {
+    document.dispatchEvent(
+      new MouseEvent("pointermove", { clientX: WIDTH / 2 })
+    );
+  });
+
+  act(() => {
+    document.dispatchEvent(new MouseEvent("pointerup"));
   });
 
   expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION / 2}`);

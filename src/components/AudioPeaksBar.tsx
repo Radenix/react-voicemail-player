@@ -5,13 +5,14 @@ import React, {
   RefObject,
   memo,
   useEffect,
+  useCallback,
 } from "react";
 import useAudioPeaks from "../hooks/useAudioPeaks";
 
 export interface AudioPeaksBarProps {
   audioData: AudioBuffer | null;
   progress: number;
-  onClick: (relativeX: number) => void;
+  onProgressChange: (progress: number) => void;
 }
 
 const BAR_WIDTH = 2;
@@ -21,7 +22,7 @@ const MIN_BAR_HEIGHT = 1;
 export default memo(function AudioPeaksBar({
   audioData,
   progress,
-  onClick,
+  onProgressChange,
 }: AudioPeaksBarProps) {
   const containerRef = useRef<HTMLDivElement>();
   const { width, height } = useElementSize(containerRef);
@@ -33,12 +34,40 @@ export default memo(function AudioPeaksBar({
     `rvmp_clip_path_${Math.random().toString(36).substring(2)}`
   );
 
-  const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const bbox = event.currentTarget.getBoundingClientRect();
-    const offsetX = event.clientX - bbox.left;
-    const relativeX = offsetX / bbox.width;
-    onClick(relativeX);
-  };
+  const onDragStart = useCallback(
+    (startEvent: React.PointerEvent) => {
+      if (startEvent.button !== 0) {
+        return;
+      }
+
+      const { left, width } = startEvent.currentTarget.getBoundingClientRect();
+      const originX = startEvent.clientX;
+      const offsetX = originX - left;
+      let hasMoved = false;
+
+      const onDragMove = (moveEvent: PointerEvent) => {
+        hasMoved = true;
+        const movementX = moveEvent.clientX - originX + offsetX;
+        onProgressChange(movementX / width);
+      };
+      const onDragEnd = (endEvent: PointerEvent) => {
+        if (endEvent.button !== 0) {
+          return;
+        }
+        if (!hasMoved) {
+          onProgressChange(offsetX / width);
+        }
+        document.removeEventListener("pointermove", onDragMove);
+        document.removeEventListener("pointerup", onDragEnd);
+        document.removeEventListener("pointercancel", onDragEnd);
+      };
+
+      document.addEventListener("pointermove", onDragMove);
+      document.addEventListener("pointerup", onDragEnd);
+      document.addEventListener("pointercancel", onDragEnd);
+    },
+    [onProgressChange]
+  );
 
   const renderBars = () => {
     const result = [];
@@ -73,7 +102,7 @@ export default memo(function AudioPeaksBar({
   };
 
   return (
-    <div data-testid="peaks-bar" onClick={handleClick} ref={containerRef}>
+    <div data-testid="peaks-bar" onPointerDown={onDragStart} ref={containerRef}>
       <svg className={prefixClassName("peaks")}>
         <defs>
           <clipPath id={clipPathId}>{renderBars()}</clipPath>
