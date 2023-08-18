@@ -33,7 +33,7 @@ export default function VoicemailPlayer({
 
   const renderStatus = () => {
     if (playback.status === "error") {
-      return <span title={playback.error.message}>Error</span>;
+      return <span title={playback.error?.message}>Error</span>;
     }
 
     return (

@@ -96,7 +96,16 @@ export function listenForChanges(
   };
 }
 
-export function createCommands(audioElement: HTMLAudioElement) {
+export function createCommands(audioElement: HTMLAudioElement | null) {
+  if (!audioElement) {
+    const noop = () => {};
+    return {
+      play: noop,
+      pause: noop,
+      seek: noop,
+    };
+  }
+
   return {
     play() {
       audioElement.play();

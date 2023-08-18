@@ -27,10 +27,9 @@ export default function useAudioData(
     fetch(audioUrl, { signal: abortController.signal })
       .then((response) => {
         if (!response.ok) {
-          const message = `[react-voicemail-player]: failed to load audio at ${audioUrl}. The server responded with ${response.status}: ${response.statusText}`;
-          console.error(message);
-          setError(new Error(message));
-          return;
+          throw new Error(
+            `Failed to load audio at ${audioUrl}. The server responded with ${response.status}: ${response.statusText}`
+          );
         }
 
         return response.arrayBuffer();
@@ -50,10 +49,7 @@ export default function useAudioData(
           );
           return;
         }
-        console.error(
-          `[react-voicemail-player]: failed to load or decode audio at ${audioUrl}`,
-          err
-        );
+        console.error(`[react-voicemail-player]: ${err.message}`, err);
         setError(err);
       });
 
@@ -68,7 +64,7 @@ export default function useAudioData(
  * it becomes available AND it is a URL that can be `fetch`ed
  */
 function useAudioSourceUrl(audioElement: HTMLAudioElement | null) {
-  const [result, setResult] = useState<string | null>(audioElement?.currentSrc);
+  const [result, setResult] = useState<string | null>();
 
   useEffect(() => {
     if (!audioElement) {

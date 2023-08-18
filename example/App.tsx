@@ -86,11 +86,14 @@ function MuteUnmute() {
 }
 
 function PlaybackSpeed() {
-  const myAudioRef = useRef<HTMLAudioElement>(null);
+  const myAudioRef: React.MutableRefObject<HTMLAudioElement | null> =
+    useRef(null);
   const [speed, setSpeed] = useState<number>(1);
 
   useEffect(() => {
-    myAudioRef.current.playbackRate = speed;
+    if (myAudioRef.current) {
+      myAudioRef.current.playbackRate = speed;
+    }
   }, [speed]);
 
   return (
@@ -137,7 +140,7 @@ function CustomStyle() {
 }
 
 function LocalFileAudio() {
-  const [localFile, setLocalFile] = useState<File | null>(null);
+  const [localFile, setLocalFile] = useState<File | undefined>();
   const localFileUrl = useBlobUrl(localFile);
 
   return (
@@ -146,7 +149,7 @@ function LocalFileAudio() {
       <input
         type="file"
         accept="audio/*"
-        onChange={(e) => setLocalFile(e.target.files[0])}
+        onChange={(e) => setLocalFile(e.target.files?.[0])}
       />
 
       <VoicemailPlayer>
@@ -156,8 +159,8 @@ function LocalFileAudio() {
   );
 }
 
-function useBlobUrl(blob: Blob | null): string | null {
-  const [url, setUrl] = useState<string | null>();
+function useBlobUrl(blob?: Blob): string | undefined {
+  const [url, setUrl] = useState<string | undefined>();
   useEffect(() => {
     if (blob) {
       const blobUrl = URL.createObjectURL(blob);

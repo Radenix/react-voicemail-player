@@ -18,7 +18,7 @@ export default function useAudioPlayback(
   const [data] = useAudioData(audioElement);
 
   const subscribeToAudio = useCallback(
-    (callback) => {
+    (callback: () => void) => {
       if (!audioElement) {
         return () => {};
       }
@@ -34,7 +34,7 @@ export default function useAudioPlayback(
       return () => AudioPlaybackState.EMPTY;
     }
 
-    let prev = null;
+    let prev: AudioPlaybackState | null = null;
     return () => {
       let next = AudioPlaybackState.fromAudioElementAndData(audioElement, data);
       if (prev && AudioPlaybackState.equal(prev, next)) {

@@ -2,10 +2,10 @@ import React, {
   useRef,
   useLayoutEffect,
   useState,
-  RefObject,
   memo,
   useEffect,
   useCallback,
+  RefObject,
 } from "react";
 import useAudioPeaks from "../hooks/useAudioPeaks";
 
@@ -14,6 +14,8 @@ export interface AudioPeaksBarProps {
   progress: number;
   onProgressChange: (progress: number) => void;
 }
+
+type Size = { width: number; height: number };
 
 const BAR_WIDTH = 2;
 const BAR_GAP = 1;
@@ -24,7 +26,7 @@ export default memo(function AudioPeaksBar({
   progress,
   onProgressChange,
 }: AudioPeaksBarProps) {
-  const containerRef = useRef<HTMLDivElement>();
+  const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useElementSize(containerRef);
 
   const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
@@ -126,8 +128,6 @@ export default memo(function AudioPeaksBar({
   );
 });
 
-type Size = { width: number; height: number };
-
 function useElementSize(ref: RefObject<HTMLElement>): Size {
   const [size, setSize] = useState<Size>({
     width: 0,
@@ -135,11 +135,26 @@ function useElementSize(ref: RefObject<HTMLElement>): Size {
   });
 
   useLayoutEffect(() => {
-    const bbox = ref.current.getBoundingClientRect();
+    const element = ref.current;
+    if (!element) {
+      console.error(
+        "[react-voicemail-player]: Cannot determine element size because the given ref is not attached to the element"
+      );
+      return;
+    }
+    const bbox = ref.current!.getBoundingClientRect();
     setSize({ width: bbox.width, height: bbox.height });
   }, []);
 
   useEffect(() => {
+    const element = ref.current;
+    if (!element) {
+      console.error(
+        "[react-voicemail-player]: Cannot observe element size because the given ref is not attached to the element"
+      );
+      return;
+    }
+
     const observer = new ResizeObserver((entries) => {
       const entry = entries[0];
       let w, h;
@@ -153,7 +168,7 @@ function useElementSize(ref: RefObject<HTMLElement>): Size {
 
       setSize({ width: w, height: h });
     });
-    observer.observe(ref.current);
+    observer.observe(element);
     return () => observer.disconnect();
   }, []);
 
