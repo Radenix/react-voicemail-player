@@ -5,17 +5,16 @@
   "homepage": "https://github.com/vadimavdeev/react-voicemail-player",
   "main": "dist/react-voicemail-player.cjs.js",
   "module": "dist/react-voicemail-player.esm.js",
-  "typings": "typings/index.d.ts",
+  "typings": "dist/index.d.ts",
   "files": [
-    "dist",
-    "typings"
+    "dist"
   ],
   "scripts": {
     "serve": "esbuild example/index.tsx --bundle --outdir=example/dist --servedir=example/ --serve --watch",
-    "start": "concurrently --kill-others --raw \"yarn:serve\" \"yarn:check\"",
+    "start": "concurrently --kill-others --raw \"yarn:serve\" \"yarn:typecheck\"",
     "build": "node ./scripts/build.mjs",
     "test": "jest",
-    "check": "tsc --noEmit -w"
+    "typecheck": "tsc -w"
   },
   "repository": {
     "type": "git",

@@ -5,7 +5,6 @@ import React, {
   memo,
   useEffect,
   useCallback,
-  RefObject,
 } from "react";
 import useAudioPeaks from "../hooks/useAudioPeaks";
 
@@ -128,7 +127,7 @@ export default memo(function AudioPeaksBar({
   );
 });
 
-function useElementSize(ref: RefObject<HTMLElement>): Size {
+function useElementSize(ref: React.RefObject<HTMLElement>): Size {
   const [size, setSize] = useState<Size>({
     width: 0,
     height: 0,

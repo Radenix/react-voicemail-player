@@ -1,4 +1,5 @@
-import { existsSync, rmSync } from "fs";
+import { existsSync, rmSync } from "node:fs";
+import { spawn } from "node:child_process";
 import * as esbuild from "esbuild";
 
 if (existsSync("dist")) {
@@ -38,4 +39,25 @@ async function buildCss() {
   });
 }
 
-await Promise.all([buildJs("esm"), buildJs("cjs"), buildCss()]);
+function buildTypes() {
+  return new Promise((resolve, reject) => {
+    const child = spawn("tsc", ["--project", "tsconfig.prod.json"], {
+      stdio: "inherit",
+    });
+
+    child.on("error", (err) => {
+      console.error("Child process could not be spawned", err);
+      reject(err);
+    });
+
+    child.on("exit", (code) => {
+      if (code === 0) {
+        resolve();
+      } else {
+        reject(new Error("typescript compilation failed"));
+      }
+    });
+  });
+}
+
+await Promise.all([buildJs("esm"), buildJs("cjs"), buildCss(), buildTypes()]);

@@ -1,12 +1,7 @@
 {
+  "extends": "./tsconfig.base.json",
   "compilerOptions": {
-    "target": "ESNext",
-    "module": "None",
-    "jsx": "react",
-    "moduleResolution": "Node",
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "baseUrl": "."
+    "noEmit": true
   },
-  "include": ["src/", "example/"]
+  "include": ["src", "example"]
 }
