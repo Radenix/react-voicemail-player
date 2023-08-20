@@ -1,4 +1,4 @@
-import { expect, test } from "@jest/globals";
+import { expect, test, vi } from "vitest";
 import { AudioPlaybackState, createCommands } from "./audio-playback";
 
 test("get state from empty audio", () => {
@@ -158,7 +158,7 @@ test("get duration from data", () => {
 
 test("command play", () => {
   const audio = new Audio();
-  Object.defineProperty(audio, "play", { value: jest.fn() });
+  Object.defineProperty(audio, "play", { value: vi.fn() });
 
   const commands = createCommands(audio);
   commands.play();
@@ -168,7 +168,7 @@ test("command play", () => {
 
 test("command pause", () => {
   const audio = new Audio();
-  Object.defineProperty(audio, "pause", { value: jest.fn() });
+  Object.defineProperty(audio, "pause", { value: vi.fn() });
 
   const commands = createCommands(audio);
   commands.pause();
@@ -178,7 +178,7 @@ test("command pause", () => {
 
 test("command seek", () => {
   const audio = new Audio();
-  const setCurrentTimeMock = jest.fn();
+  const setCurrentTimeMock = vi.fn();
   Object.defineProperties(audio, {
     currentTime: { set: setCurrentTimeMock },
     duration: { value: 60 },
@@ -192,7 +192,7 @@ test("command seek", () => {
 
 test("command seek with unknown duration", () => {
   const audio = new Audio();
-  const setCurrentTimeMock = jest.fn();
+  const setCurrentTimeMock = vi.fn();
   Object.defineProperties(audio, {
     currentTime: { set: setCurrentTimeMock },
     duration: { value: Number.POSITIVE_INFINITY },

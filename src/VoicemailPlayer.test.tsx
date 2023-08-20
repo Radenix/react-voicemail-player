@@ -1,6 +1,5 @@
 import React from "react";
-import { expect, test } from "@jest/globals";
-import "@testing-library/jest-dom";
+import { expect, test, vi, SpyInstance } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import VoicemailPlayer from "./VoicemailPlayer";
@@ -9,20 +8,20 @@ import "./__mocks__/mockAudioContext";
 import "./__mocks__/mockHtmlMediaElement";
 import "./__mocks__/mockResizeObserver";
 
-let fetchMock: jest.SpyInstance<ReturnType<typeof fetch>>;
+let fetchMock: SpyInstance<Parameters<typeof fetch>, ReturnType<typeof fetch>>;
 
 beforeAll(() => {
-  fetchMock = jest.spyOn(window, "fetch");
+  fetchMock = vi.spyOn(window, "fetch");
 });
 
 beforeEach(() => {
-  jest.useFakeTimers();
+  vi.useFakeTimers({ shouldAdvanceTime: true });
 });
 
 afterEach(() => {
   fetchMock.mockClear();
-  jest.runOnlyPendingTimers();
-  jest.useRealTimers();
+  vi.runOnlyPendingTimers();
+  vi.useRealTimers();
 });
 
 afterAll(() => {
@@ -55,7 +54,7 @@ function setup(audioDuration: number) {
     global.window.simulateLoadAudioElements();
   });
 
-  return userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
+  return userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
 }
 
 test("render", async () => {
@@ -106,7 +105,7 @@ test("play", async () => {
     // mock audio element sends "timeupdate" events once a second;
     // +1 is there to advance to the time just after expected number
     // of events is fired
-    jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
+    vi.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
   expect(screen.getByRole("timer").textContent).toBe(`0:0${SECONDS_TO_PLAY}`);
@@ -128,7 +127,7 @@ test("pause", async () => {
     // mock audio element sends "timeupdate" events once a second;
     // +1 is there to advance to the time just after expected number
     // of events is fired
-    jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
+    vi.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
   await user.click(
@@ -137,7 +136,7 @@ test("pause", async () => {
     })
   );
 
-  act(() => jest.advanceTimersByTime(SECONDS_TO_PAUSE_FOR * 1000 + 1));
+  act(() => vi.advanceTimersByTime(SECONDS_TO_PAUSE_FOR * 1000 + 1));
 
   expect(screen.getByRole("timer").textContent).toBe(`0:0${SECONDS_TO_PLAY}`);
 });
@@ -157,7 +156,7 @@ test("stop when ended", async () => {
     // mock audio element sends "timeupdate" events once a second;
     // +1 is there to advance to the time just after expected number
     // of events is fired
-    jest.advanceTimersByTime((DURATION + SECONDS_TO_WAIT_AFTER_END) * 1000 + 1)
+    vi.advanceTimersByTime((DURATION + SECONDS_TO_WAIT_AFTER_END) * 1000 + 1)
   );
 
   expect(
@@ -183,7 +182,7 @@ test("play after ended", async () => {
     // mock audio element sends "timeupdate" events once a second;
     // +1 is there to advance to the time just after expected number
     // of events is fired
-    jest.advanceTimersByTime(DURATION * 1000 + 1)
+    vi.advanceTimersByTime(DURATION * 1000 + 1)
   );
 
   await user.click(
@@ -204,7 +203,7 @@ test("seek while paused", async () => {
   const user = setup(DURATION);
 
   const peaksBar = screen.getByTestId("peaks-bar");
-  peaksBar.getBoundingClientRect = jest.fn().mockReturnValue({
+  peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
@@ -240,11 +239,11 @@ test("seek while playing", async () => {
     // mock audio element sends "timeupdate" events once a second;
     // +1 is there to advance to the time just after expected number
     // of events is fired
-    jest.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
+    vi.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
   const peaksBar = screen.getByTestId("peaks-bar");
-  peaksBar.getBoundingClientRect = jest.fn().mockReturnValue({
+  peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
@@ -270,7 +269,7 @@ test("seek by gragging", async () => {
   const user = setup(DURATION);
 
   const peaksBar = screen.getByTestId("peaks-bar");
-  peaksBar.getBoundingClientRect = jest.fn().mockReturnValue({
+  peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
     left: 0,
     top: 0,
     width: WIDTH,
