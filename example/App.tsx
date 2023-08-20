@@ -130,7 +130,7 @@ function PlaybackSpeed() {
 function CustomStyle() {
   return (
     <>
-      <h3>Basic</h3>
+      <h3>Custom Style</h3>
 
       <VoicemailPlayer className="orange-player">
         {(audioRef) => <audio ref={audioRef} src="/audio/short.mp3" />}
