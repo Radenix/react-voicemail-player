@@ -103,7 +103,11 @@ export default memo(function AudioPeaksBar({
   };
 
   return (
-    <div data-testid="peaks-bar" onPointerDown={onDragStart} ref={containerRef}>
+    <div
+      data-testid="rvmp-peaks-bar"
+      onPointerDown={onDragStart}
+      ref={containerRef}
+    >
       <svg className={prefixClassName("peaks")}>
         <defs>
           <clipPath id={clipPathId}>{renderBars()}</clipPath>

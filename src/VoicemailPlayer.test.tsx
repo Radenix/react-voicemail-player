@@ -202,7 +202,7 @@ test("seek while paused", async () => {
   const WIDTH = 200;
   const user = setup(DURATION);
 
-  const peaksBar = screen.getByTestId("peaks-bar");
+  const peaksBar = screen.getByTestId("rvmp-peaks-bar");
   peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
     left: 0,
     top: 0,
@@ -242,7 +242,7 @@ test("seek while playing", async () => {
     vi.advanceTimersByTime(SECONDS_TO_PLAY * 1000 + 1)
   );
 
-  const peaksBar = screen.getByTestId("peaks-bar");
+  const peaksBar = screen.getByTestId("rvmp-peaks-bar");
   peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
     left: 0,
     top: 0,
@@ -268,7 +268,7 @@ test("seek by gragging", async () => {
   const WIDTH = 200;
   const user = setup(DURATION);
 
-  const peaksBar = screen.getByTestId("peaks-bar");
+  const peaksBar = screen.getByTestId("rvmp-peaks-bar");
   peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
     left: 0,
     top: 0,
