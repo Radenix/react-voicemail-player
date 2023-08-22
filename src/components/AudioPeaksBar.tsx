@@ -17,8 +17,8 @@ export interface AudioPeaksBarProps {
 type Size = { width: number; height: number };
 
 const BAR_WIDTH = 2;
-const BAR_GAP = 1;
-const MIN_BAR_HEIGHT = 1;
+const BAR_GAP = 2;
+const MIN_BAR_HEIGHT = 2;
 
 export default memo(function AudioPeaksBar({
   audioData,
@@ -72,12 +72,12 @@ export default memo(function AudioPeaksBar({
 
   const renderBars = () => {
     const result = [];
+    const availableHeight = height - MIN_BAR_HEIGHT;
+
     for (let i = 0; i < peaks.length; i++) {
-      const barHeight = Math.max(Math.floor(peaks[i] * height), MIN_BAR_HEIGHT);
+      const barHeight = Math.floor(peaks[i] * availableHeight) + MIN_BAR_HEIGHT;
       const barX = i * (BAR_WIDTH + BAR_GAP);
       const barY = height - barHeight;
-      // y coordinate of a bar that is just outside the canvas
-      const barOutsideY = height + barHeight - MIN_BAR_HEIGHT;
 
       result.push(
         <rect
@@ -86,13 +86,16 @@ export default memo(function AudioPeaksBar({
           y={barY}
           width={BAR_WIDTH}
           height={barHeight}
+          rx={BAR_WIDTH / 2}
+          ry={BAR_WIDTH / 2}
           fill="transparent"
         >
-          <animate
-            attributeName="y"
+          <animateTransform
+            attributeName="transform"
+            type="translate"
             // MIN_BAR_HEIGHT pixels of the bar should always be visible
-            from={barOutsideY - MIN_BAR_HEIGHT}
-            to={barY}
+            from={`0 ${barHeight - MIN_BAR_HEIGHT}`}
+            to="0 0"
             dur="250ms"
             repeatCount="1"
           />
