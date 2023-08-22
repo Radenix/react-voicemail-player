@@ -49,6 +49,11 @@
   display: block;
   width: 100%;
   height: 18px;
+  cursor: pointer;
+}
+
+.VoicemailPlayer-root .VoicemailPlayer-peaks:active {
+  cursor: grabbing;
 }
 
 .VoicemailPlayer-root .VoicemailPlayer-peaks .VoicemailPlayer-peaks-bg {
