@@ -5,7 +5,7 @@
   "homepage": "https://github.com/vadimavdeev/react-voicemail-player",
   "main": "dist/react-voicemail-player.cjs.js",
   "module": "dist/react-voicemail-player.esm.js",
-  "typings": "dist/index.d.ts",
+  "typings": "dist/react-voicemail-player.d.ts",
   "files": [
     "dist"
   ],
