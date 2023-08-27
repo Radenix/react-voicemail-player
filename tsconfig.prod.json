@@ -2,10 +2,10 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "rootDir": "src",
-    "outDir": "./dist",
+    "outDir": "./lib",
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "declarationMap": true
   },
-  "files": ["src/index.ts"],
-  "exclude": ["**/__mocks__", "**/*.test.*"]
+  "files": ["src/index.ts"]
 }

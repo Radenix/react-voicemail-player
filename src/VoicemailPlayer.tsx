@@ -4,14 +4,44 @@ import AudioPeaksBar from "./components/AudioPeaksBar";
 import { PlayIcon, PauseIcon } from "./components/icons";
 import { AudioPlaybackStatus } from "./audio-playback";
 
+/**
+ * `VoicemailPlayer` component props
+ * @public
+ * */
 export interface VoicemailPlayerProps {
+  /**
+   * A function that renders <audio> element
+   *
+   * @param ref - A callback to be set as `ref` on the <audio> element
+   * @returns React element
+   * @example
+   * ```ts
+   * <VoicemailPlayer>{(ref) => <audio ref={ref} />}</VoicemailPlayer>
+   * ```
+   *
+   * @public
+   */
   children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement;
+
+  /**
+   * Optional CSS class to add to the player's root element
+   */
   className?: string;
 }
 
 /**
- * Given a function that renders an audio element as `children`, renders a UI
- * to visualize and control the audio playback
+ * Given a function that renders an <audio> element as `children`, renders a
+ * React element that displays the audio's amplitude peaks, current time / duration,
+ * and allows to control the audio playback (currently Play / Pause, and Seek)
+ *
+ * @param props - {@link VoicemailPlayerProps}
+ * @returns React element
+ * @example
+ * ```ts
+ * <VoicemailPlayer>{(ref) => <audio ref={ref} />}</VoicemailPlayer>
+ * ```
+ *
+ * @public
  */
 export default function VoicemailPlayer({
   children,
