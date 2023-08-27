@@ -12,7 +12,7 @@
   "scripts": {
     "serve": "esbuild example/index.tsx --bundle --outdir=example/dist --servedir=example/ --serve --watch",
     "start": "concurrently --kill-others --raw \"yarn:serve\" \"yarn:typecheck\"",
-    "build": "node ./scripts/build.mjs",
+    "build": "node ./scripts/build.mjs && api-extractor run",
     "test": "vitest",
     "typecheck": "tsc -w",
     "preversion": "vitest run && yarn build"
@@ -38,6 +38,7 @@
     "react-dom": ">= 18.0.0"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.36.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
