@@ -11,7 +11,7 @@ import "./__mocks__/mockResizeObserver";
 let fetchMock: SpyInstance<Parameters<typeof fetch>, ReturnType<typeof fetch>>;
 
 beforeAll(() => {
-  fetchMock = vi.spyOn(window, "fetch");
+  global.fetch = fetchMock = vi.fn();
 });
 
 beforeEach(() => {
