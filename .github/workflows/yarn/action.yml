@@ -12,4 +12,5 @@ runs:
         key: node-modules-${{ hashFiles('**/yarn.lock') }}
 
     - name: Yarn install
+      shell: bash
       run: yarn install --immutable
