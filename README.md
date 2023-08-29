@@ -4,13 +4,13 @@ The audio player control for React that displays the audio's amplitude peaks. Lo
 
 <img src="./docs/images/three-players.png" width="384">
 
-[Demo](https://local-longhaired-liquid.glitch.me/).
-
 Note, this is neither a powerful audio visualization library, nor a powerful audio player. If you need rich visualizations, I suggest [wavesurfer.js](https://wavesurfer-js.org/). If you look for a general-purpose audio player, check out [react-audio-player-pro](https://webbestmaster.github.io/react-audio-player-pro/).
+
+Check out the [demo app](https://local-longhaired-liquid.glitch.me/).
 
 ## Installation
 
-Requires `react` to be already installed in your project. Minimum supported version of React is 18 because this component uses [`useSyncExternalStore`](https://react.dev/reference/react/useSyncExternalStore) hook. There is a [shim](https://www.npmjs.com/package/use-sync-external-store) for that, so it might be added in the future to support earlier versions of `react`.
+Requires `react` to be already installed in your project. Minimum supported version of React is 18 because this component uses [`useSyncExternalStore`](https://react.dev/reference/react/useSyncExternalStore) hook. There is a [shim](https://www.npmjs.com/package/use-sync-external-store) for that, so it might be added in the future to support earlier versions of `react` if needed.
 
 ```
 npm i react-voicemail-player
@@ -57,6 +57,8 @@ Currently, the component only accepts two props:
 - `children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement` - A function that renders the `<audio>` element and sets its `ref` prop
 - `className: string` - A CSS class name to give to the component's root element
 
+See the full [API Reference](./docs/api/index.md).
+
 ## Styling
 
 Please consult the component's [stylesheet](./src/VoicemailPlayer.css) and [source code](./src/VoicemailPlayer.tsx) as necessary to determine which classes and properties you need to override.
@@ -75,12 +77,8 @@ Start development server
 yarn start
 ```
 
-Run tests
+Run tests (with watch mode)
 
 ```
 yarn test
-
-# or with watch mode
-
-yarn test --watch
 ```
