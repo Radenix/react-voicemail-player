@@ -24,8 +24,7 @@ jobs:
           cache: "yarn"
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install Dependencies
-        run: yarn install
+      - uses: ./.github/workflows/yarn-install.yml
 
       - name: Build
         run: yarn build

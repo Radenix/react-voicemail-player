@@ -18,8 +18,7 @@ jobs:
           node-version: 16
           cache: "yarn"
 
-      - name: Install Dependencies
-        run: yarn install
+      - uses: ./.github/workflows/yarn-install.yml
 
       - name: Build
         run: yarn build
