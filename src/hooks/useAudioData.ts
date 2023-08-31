@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 // so the lowest sample rate is enough
 const SAMPLE_RATE = 8000;
 
-type MaybeError = any;
-
 /**
  * Loads the audio source and decodes the data into an `AudioBuffer`.
  * Since we only fetch the data after the browser has started loading it,
@@ -13,10 +11,10 @@ type MaybeError = any;
  */
 export default function useAudioData(
   audioElement: HTMLAudioElement | null
-): [AudioBuffer | null, MaybeError | null] {
+): [AudioBuffer | null, Error | null] {
   const audioUrl = useAudioSourceUrl(audioElement);
   const [result, setResult] = useState<AudioBuffer | null>(null);
-  const [error, setError] = useState<MaybeError | null>(null);
+  const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
     if (!audioUrl) {

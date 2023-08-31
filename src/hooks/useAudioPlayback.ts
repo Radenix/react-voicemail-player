@@ -36,7 +36,10 @@ export default function useAudioPlayback(
 
     let prev: AudioPlaybackState | null = null;
     return () => {
-      let next = AudioPlaybackState.fromAudioElementAndData(audioElement, data);
+      const next = AudioPlaybackState.fromAudioElementAndData(
+        audioElement,
+        data
+      );
       if (prev && AudioPlaybackState.equal(prev, next)) {
         return prev;
       }
