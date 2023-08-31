@@ -40,14 +40,14 @@ jobs:
           if [ $NEW_VERSION != $OLD_VERSION ]; then
             echo "New version $NEW_VERSION detected"
             echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
-            git log "$OLD_VERSION"..HEAD --pretty=format:"* %s" > TEMP_CHANGELOG.md
+            git log v$OLD_VERSION..HEAD --pretty=format:"* %s" > TEMP_CHANGELOG.md
           else
             echo "Version $OLD_VERSION hasn't changed, skipping the release"
           fi
 
       - name: Create Git Tag
         if: ${{ steps.version.outputs.version }}
-        run: git tag $NEW_VERSION && git push --tags
+        run: git tag v$NEW_VERSION && git push --tags
         env:
           NEW_VERSION: ${{ steps.version.outputs.version }}
 
