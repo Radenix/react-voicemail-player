@@ -85,22 +85,24 @@ yarn test
 
 ### E2E Tests
 
+Make sure to stop the dev server (if you've ran `yarn start` or `yarn serve`) before running e2e tests, because a seprate dev server is started for e2e test and it should listen on port `8000`. The reason for this is that at the time of this writing `esbuild` CLI does not allow to specify the port when running with `--serve`, so if port `8000` is in use by the dev server, it will pick another port and e2e test won't work. TODO: consider putting a proxy in front of esbuild, or write a custom script to run the dev server using `esbuild`'s public API.
+
 Run once:
 
 ```
-yarn playwright test
+yarn test:e2e
 ```
 
 Run in UI mode:
 
 ```
-playwright test --ui
+yarn test:e2e:ui
 ```
 
 Update screenshots:
 
 ```
-yarn playwright run --update-snapshots
+yarn test:e2e --update-snapshots
 ```
 
 Update snapshots on Linux (for CI):
@@ -108,5 +110,5 @@ Update snapshots on Linux (for CI):
 ```
 docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.37.0-jammy /bin/bash
 yarn install
-yarn playwright test --update-snapshots
+yarn test:e2e --update-snapshots
 ```
