@@ -32,6 +32,8 @@ jobs:
       - name: Test
         run: yarn test
 
+      - uses: ./.github/workflows/playwright
+
       - name: Extract version
         id: version
         run: |

@@ -12,6 +12,7 @@
   ],
   "scripts": {
     "serve": "esbuild example/index.tsx --bundle --outdir=example/dist --servedir=example/ --serve --watch",
+    "serve:e2e": "esbuild e2e/index.jsx --bundle --outdir=e2e/dist --servedir=. --serve",
     "start": "concurrently --kill-others --raw \"yarn:serve\" \"yarn:typecheck\"",
     "build": "node ./scripts/build.mjs && api-extractor run",
     "test": "vitest",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@microsoft/api-documenter": "^7.22.33",
     "@microsoft/api-extractor": "^7.36.4",
+    "@playwright/test": "^1.37.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",

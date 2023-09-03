@@ -82,3 +82,31 @@ Run tests (with watch mode)
 ```
 yarn test
 ```
+
+### E2E Tests
+
+Run once:
+
+```
+yarn playwright test
+```
+
+Run in UI mode:
+
+```
+playwright test --ui
+```
+
+Update screenshots:
+
+```
+yarn playwright run --update-snapshots
+```
+
+Update snapshots on Linux (for CI):
+
+```
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.37.0-jammy /bin/bash
+yarn install
+yarn playwright test --update-snapshots
+```
