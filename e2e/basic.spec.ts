@@ -14,7 +14,7 @@ test("play and pause", async ({ page }) => {
 
   await pause.click();
   expect(pause).not.toBeVisible();
-  expect(play).toBeVisible();
+  await expect(play).toBeVisible();
 });
 
 test("seek", async ({ page }) => {
