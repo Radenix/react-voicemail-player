@@ -5,8 +5,10 @@ runs:
   using: "composite"
   steps:
     - name: Install Playwright Browsers
+      shell: bash
       run: yarn playwright install --with-deps
     - name: Run Playwright tests
+      shell: bash
       run: yarn playwright test
     - uses: actions/upload-artifact@v3
       if: always()
