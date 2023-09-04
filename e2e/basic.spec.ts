@@ -7,13 +7,13 @@ test("play and pause", async ({ page }) => {
   await expect(play).toBeEnabled();
 
   await play.click();
-  expect(play).not.toBeVisible();
+  await expect(play).not.toBeVisible();
 
   const pause = page.getByRole("button", { name: "Pause" });
-  expect(pause).toBeVisible();
+  await expect(pause).toBeVisible();
 
   await pause.click();
-  expect(pause).not.toBeVisible();
+  await expect(pause).not.toBeVisible();
   await expect(play).toBeVisible();
 });
 
