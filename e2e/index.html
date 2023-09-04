@@ -5,10 +5,32 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>react-voicemail-player Test</title>
     <link rel="stylesheet" href="/dist/react-voicemail-player.css" />
+    <script src="/node_modules/react/umd/react.production.min.js"></script>
+    <script src="/node_modules/react-dom/umd/react-dom.production.min.js"></script>
+    <script>
+      window.require = function (name) {
+        if (name === "react") {
+          return React;
+        }
+        throw new Error(`Unexpected require for: ${name}`);
+      };
+    </script>
+    <script src="/dist/react-voicemail-player.iife.js"></script>
   </head>
   <body>
     <div id="root" style="width: 300px"></div>
 
-    <script src="/e2e/dist/index.js"></script>
+    <script>
+      const Player = ReactVoicemailPlayer.default;
+
+      ReactDOM.createRoot(root).render(
+        React.createElement(Player, {}, (ref) =>
+          React.createElement("audio", {
+            ref,
+            src: "/example/audio/long.mp3",
+          })
+        )
+      );
+    </script>
   </body>
 </html>
