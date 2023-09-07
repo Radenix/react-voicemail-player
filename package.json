@@ -1,6 +1,6 @@
 {
   "name": "react-voicemail-player",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "React component for rendering voice messages in chat-based apps",
   "homepage": "https://github.com/vadimavdeev/react-voicemail-player",
   "type": "module",
@@ -17,7 +17,10 @@
     "test": "vitest",
     "typecheck": "tsc -w",
     "lint": "eslint src --fix",
-    "docs": "api-extractor run && api-documenter markdown -i temp -o docs/api"
+    "docs": "api-extractor run && api-documenter markdown -i temp -o docs/api",
+    "serve:e2e": "serve .",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui"
   },
   "repository": {
     "type": "git",
@@ -42,6 +45,7 @@
   "devDependencies": {
     "@microsoft/api-documenter": "^7.22.33",
     "@microsoft/api-extractor": "^7.36.4",
+    "@playwright/test": "^1.37.1",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^14.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -55,6 +59,7 @@
     "prettier": "3.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "serve": "^14.2.1",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
   },

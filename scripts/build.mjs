@@ -29,6 +29,7 @@ async function buildJs(format) {
     external: ["react"],
     format,
     outExtension: { ".js": `.${format}.js` },
+    globalName: format === "iife" ? "ReactVoicemailPlayer" : undefined,
   });
 }
 
@@ -60,4 +61,10 @@ function buildTypes() {
   });
 }
 
-await Promise.all([buildJs("esm"), buildJs("cjs"), buildCss(), buildTypes()]);
+await Promise.all([
+  buildJs("esm"),
+  buildJs("cjs"),
+  buildJs("iife"),
+  buildCss(),
+  buildTypes(),
+]);

@@ -82,3 +82,34 @@ Run tests (with watch mode)
 ```
 yarn test
 ```
+
+### E2E Tests
+
+> E2E tests are run against the pre-compiled library files,
+> make sure you've run `yarn build` before running e2e tests locally
+
+Run once:
+
+```
+yarn test:e2e
+```
+
+Run in UI mode:
+
+```
+yarn test:e2e:ui
+```
+
+Update screenshots:
+
+```
+yarn test:e2e --update-snapshots
+```
+
+Update snapshots on Linux (for CI):
+
+```
+docker run --rm --network host -v $(pwd):/work/ -w /work/ -it mcr.microsoft.com/playwright:v1.37.0-jammy /bin/bash
+yarn install
+yarn test:e2e --update-snapshots
+```
