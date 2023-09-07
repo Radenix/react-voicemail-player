@@ -85,7 +85,8 @@ yarn test
 
 ### E2E Tests
 
-Make sure to stop the dev server (if you've ran `yarn start` or `yarn serve`) before running e2e tests, because a seprate dev server is started for e2e test and it should listen on port `8000`. The reason for this is that at the time of this writing `esbuild` CLI does not allow to specify the port when running with `--serve`, so if port `8000` is in use by the dev server, it will pick another port and e2e test won't work. TODO: consider putting a proxy in front of esbuild, or write a custom script to run the dev server using `esbuild`'s public API.
+> E2E tests are run against the pre-compiled library files,
+> make sure you've run `yarn build` before running e2e tests locally
 
 Run once:
 
