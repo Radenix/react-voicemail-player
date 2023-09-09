@@ -11,7 +11,7 @@
     "dist"
   ],
   "scripts": {
-    "serve": "esbuild example/index.tsx --bundle --outdir=example/dist --servedir=example/ --serve --watch",
+    "serve": "node ./scripts/serve.mjs",
     "start": "concurrently --kill-others --raw \"yarn:serve\" \"yarn:typecheck\"",
     "build": "node ./scripts/build.mjs && api-extractor run",
     "test": "vitest",
@@ -60,6 +60,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "serve": "^14.2.1",
+    "serve-handler": "^6.1.5",
     "typescript": "^5.1.6",
     "vitest": "^0.34.2"
   },
