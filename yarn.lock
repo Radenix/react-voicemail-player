@@ -2806,7 +2806,7 @@ semver@^7.5.4, semver@~7.5.4:
   dependencies:
     lru-cache "^6.0.0"
 
-serve-handler@6.1.5:
+serve-handler@6.1.5, serve-handler@^6.1.5:
   version "6.1.5"
   resolved "https://registry.yarnpkg.com/serve-handler/-/serve-handler-6.1.5.tgz#a4a0964f5c55c7e37a02a633232b6f0d6f068375"
   integrity sha512-ijPFle6Hwe8zfmBxJdE+5fta53fdIY0lHISJvuikXB3VYFafRjMRpOffSPvCYsbKyBA7pvy9oYr/BT1O3EArlg==
