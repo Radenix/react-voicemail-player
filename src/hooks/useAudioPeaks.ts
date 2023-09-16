@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 
 /**
- * numbers in the range from 0 to 1, representing audio amplitude peaks
+ * Pair of numbers in the range from 0 to 1, representing audio amplitude peaks
+ * for two audio channels. If the audio has only one channel, both values will
+ * be the same.
  */
-type AudioPeaks = number[];
+type AudioPeak = [number, number];
 
 /**
  * Computes `sampleCount` amplitude peaks of the sound represented by `audioData`
@@ -11,10 +13,10 @@ type AudioPeaks = number[];
 export default function useAudioPeaks(
   audioData: AudioBuffer | null,
   sampleCount: number
-): AudioPeaks {
+): AudioPeak[] {
   const peaks = useMemo(() => {
     if (!audioData) {
-      return Array.from({ length: sampleCount }).fill(0) as AudioPeaks;
+      return Array.from({ length: sampleCount }).fill([0, 0]) as AudioPeak[];
     }
 
     return calculatePeaks(audioData, sampleCount);
@@ -24,35 +26,37 @@ export default function useAudioPeaks(
 }
 
 /**
- * Computes the maximum amplitude for each of the `sampleCount` samples of the
+ * Computes the {@link AudioPeak} for each of the `sampleCount` samples of the
  * given audio
  */
 function calculatePeaks(
   audioData: AudioBuffer,
   sampleCount: number
-): AudioPeaks {
-  const result = [];
+): AudioPeak[] {
+  const result: AudioPeak[] = [];
   const sampleSize = Math.floor(audioData.length / sampleCount);
-  const channels = Array.from({ length: audioData.numberOfChannels }, (_, i) =>
-    audioData.getChannelData(i)
-  );
+  const channels = [audioData.getChannelData(0)];
+  // we currently support up to two channels
+  if (audioData.numberOfChannels > 1) {
+    channels.push(audioData.getChannelData(1));
+  }
+
+  const topChannel = channels[0];
+  const bottomChannel = channels[1] || channels[0];
 
   for (let i = 0; i < sampleCount; i++) {
-    // maximum amplitude in the current sample
-    let max = 0;
+    let maxTop = 0;
+    let maxBottom = 0;
 
     for (let j = 0; j < sampleSize; j++) {
-      // average amplitude across all channels
-      const avg =
-        channels.reduce(
-          (acc, channel) => acc + Math.abs(channel[i * sampleSize + j] || 0),
-          0
-        ) / channels.length;
-
-      max = Math.max(max, avg);
+      maxTop = Math.max(Math.abs(topChannel[i * sampleSize + j] || 0), maxTop);
+      maxBottom = Math.max(
+        Math.abs(bottomChannel[i * sampleSize + j] || 0),
+        maxBottom
+      );
     }
 
-    result.push(max);
+    result.push([maxTop, maxBottom]);
   }
 
   return result;

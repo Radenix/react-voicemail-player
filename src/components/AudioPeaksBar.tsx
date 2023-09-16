@@ -71,11 +71,14 @@ export default memo(function AudioPeaksBar({
   );
 
   const renderBars = () => {
+    const halfHeight = (height - MIN_BAR_HEIGHT) / 2;
     const result = [];
-    const availableHeight = height - MIN_BAR_HEIGHT;
 
     for (let i = 0; i < peaks.length; i++) {
-      const barHeight = Math.floor(peaks[i] * availableHeight) + MIN_BAR_HEIGHT;
+      const topBarHeight = Math.floor(peaks[i][0] * halfHeight);
+      const bottomBarHeight = Math.floor(peaks[i][1] * halfHeight);
+
+      const barHeight = topBarHeight + bottomBarHeight + MIN_BAR_HEIGHT;
       const barX = i * (BAR_WIDTH + BAR_GAP);
       const barY = height - barHeight;
 
