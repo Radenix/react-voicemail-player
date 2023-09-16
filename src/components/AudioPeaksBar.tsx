@@ -11,6 +11,7 @@ import useAudioPeaks from "../hooks/useAudioPeaks";
 export interface AudioPeaksBarProps {
   audioData: AudioBuffer | null;
   progress: number;
+  barAlignment: "top" | "middle" | "bottom";
   onProgressChange: (progress: number) => void;
 }
 
@@ -23,6 +24,7 @@ const MIN_BAR_HEIGHT = 2;
 export default memo(function AudioPeaksBar({
   audioData,
   progress,
+  barAlignment,
   onProgressChange,
 }: AudioPeaksBarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -80,7 +82,15 @@ export default memo(function AudioPeaksBar({
 
       const barHeight = topBarHeight + bottomBarHeight + MIN_BAR_HEIGHT;
       const barX = i * (BAR_WIDTH + BAR_GAP);
-      const barY = height - barHeight;
+      let barY;
+      if (barAlignment === "top") {
+        barY = 0;
+      } else if (barAlignment === "bottom") {
+        barY = height - barHeight;
+      } else {
+        // middle
+        barY = halfHeight - topBarHeight;
+      }
 
       result.push(
         <rect
@@ -92,17 +102,7 @@ export default memo(function AudioPeaksBar({
           rx={BAR_WIDTH / 2}
           ry={BAR_WIDTH / 2}
           fill="transparent"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            // MIN_BAR_HEIGHT pixels of the bar should always be visible
-            from={`0 ${barHeight - MIN_BAR_HEIGHT}`}
-            to="0 0"
-            dur="250ms"
-            repeatCount="1"
-          />
-        </rect>
+        />
       );
     }
     return result;

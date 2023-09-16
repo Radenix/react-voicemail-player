@@ -105,6 +105,7 @@ export default function VoicemailPlayer({
         <AudioPeaksBar
           audioData={playback.data}
           progress={playback.progress}
+          barAlignment="bottom"
           onProgressChange={onProgressChange}
         />
         <div>{renderStatus()}</div>
