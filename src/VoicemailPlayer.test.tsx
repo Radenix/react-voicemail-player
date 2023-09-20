@@ -2,16 +2,19 @@ import React from "react";
 import { expect, test, vi, SpyInstance } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import VoicemailPlayer from "./VoicemailPlayer";
+import VoicemailPlayer, { VoicemailPlayerProps } from "./VoicemailPlayer";
 
 import "./__mocks__/mockAudioContext";
 import "./__mocks__/mockHtmlMediaElement";
 import "./__mocks__/mockResizeObserver";
 
 let fetchMock: SpyInstance<Parameters<typeof fetch>, ReturnType<typeof fetch>>;
+let getBoundingClientRectMock: SpyInstance<[], DOMRect>;
 
 beforeAll(() => {
   global.fetch = fetchMock = vi.fn();
+  HTMLElement.prototype.getBoundingClientRect = getBoundingClientRectMock =
+    vi.fn();
 });
 
 beforeEach(() => {
@@ -20,15 +23,29 @@ beforeEach(() => {
 
 afterEach(() => {
   fetchMock.mockClear();
+  getBoundingClientRectMock.mockClear();
   vi.runOnlyPendingTimers();
   vi.useRealTimers();
 });
 
 afterAll(() => {
   fetchMock.mockReset();
+  getBoundingClientRectMock.mockReset();
 });
 
-function setup(audioDuration: number) {
+function setup(
+  arg:
+    | number
+    | {
+        audioDuration: number;
+        elementWidth?: number;
+        componentProps?: Omit<VoicemailPlayerProps, "children">;
+      }
+) {
+  const audioDuration = typeof arg === "number" ? arg : arg.audioDuration;
+  const { componentProps = {}, elementWidth = 200 } =
+    typeof arg === "object" ? arg : {};
+
   fetchMock.mockResolvedValueOnce({
     ok: true,
     headers: new Headers(),
@@ -37,8 +54,15 @@ function setup(audioDuration: number) {
     blob: async () => new global.window.Blob([], { type: "audio/mpeg" }),
   } as Response);
 
+  getBoundingClientRectMock.mockReturnValue({
+    left: 0,
+    top: 0,
+    width: elementWidth,
+    height: 40,
+  } as DOMRect);
+
   render(
-    <VoicemailPlayer>
+    <VoicemailPlayer {...componentProps}>
       {(ref) => (
         <audio
           ref={ref}
@@ -200,15 +224,9 @@ test("play after ended", async () => {
 test("seek while paused", async () => {
   const DURATION = 20;
   const WIDTH = 200;
-  const user = setup(DURATION);
+  const user = setup({ audioDuration: DURATION, elementWidth: WIDTH });
 
   const peaksBar = screen.getByTestId("rvmp-peaks-bar");
-  peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
-    left: 0,
-    top: 0,
-    width: WIDTH,
-    height: 40,
-  });
 
   await user.pointer({
     keys: "[MouseLeft>]",
@@ -227,7 +245,7 @@ test("seek while playing", async () => {
   const DURATION = 20;
   const SECONDS_TO_PLAY = 15;
   const WIDTH = 200;
-  const user = setup(DURATION);
+  const user = setup({ audioDuration: DURATION, elementWidth: WIDTH });
 
   await user.click(
     screen.getByLabelText("Play", {
@@ -243,12 +261,6 @@ test("seek while playing", async () => {
   );
 
   const peaksBar = screen.getByTestId("rvmp-peaks-bar");
-  peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
-    left: 0,
-    top: 0,
-    width: WIDTH,
-    height: 40,
-  });
 
   await user.pointer({
     keys: "[MouseLeft>]",
@@ -266,15 +278,9 @@ test("seek while playing", async () => {
 test("seek by gragging", async () => {
   const DURATION = 20;
   const WIDTH = 200;
-  const user = setup(DURATION);
+  const user = setup({ audioDuration: DURATION, elementWidth: WIDTH });
 
   const peaksBar = screen.getByTestId("rvmp-peaks-bar");
-  peaksBar.getBoundingClientRect = vi.fn().mockReturnValue({
-    left: 0,
-    top: 0,
-    width: WIDTH,
-    height: 40,
-  });
 
   await user.pointer({
     keys: "[MouseLeft>]",
@@ -293,4 +299,28 @@ test("seek by gragging", async () => {
   });
 
   expect(screen.getByRole("timer").textContent).toBe(`0:${DURATION / 2}`);
+});
+
+test("bar customization", async () => {
+  setup({
+    audioDuration: 10,
+    componentProps: {
+      barAlignment: "middle",
+      barWidth: 8,
+      barGap: 4,
+      barRadius: 0,
+    },
+  });
+
+  const peaksBar = screen.getByTestId("rvmp-peaks-bar");
+
+  const [firstBar, secondBar] = peaksBar.querySelectorAll("svg clipPath rect");
+  expect(firstBar).not.toBe(null);
+
+  expect(firstBar).toHaveAttribute("x", "0");
+  expect(firstBar).toHaveAttribute("width", "8");
+  expect(firstBar).toHaveAttribute("rx", "0");
+  expect(firstBar).toHaveAttribute("ry", "0");
+
+  expect(secondBar).toHaveAttribute("x", "12");
 });
