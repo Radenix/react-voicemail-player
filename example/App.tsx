@@ -3,9 +3,23 @@ import VoicemailPlayer from "../src/VoicemailPlayer";
 
 export default function App() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [selectedExampleIndex, setSelectedExampleIndex] = useState<number>(0);
+
   useLayoutEffect(() => {
     document.body.dataset.theme = theme;
   }, [theme]);
+
+  const examples = [
+    Basic,
+    MultiSource,
+    MuteUnmute,
+    PlaybackSpeed,
+    CustomStyle,
+    LocalFileAudio,
+    CustomBars,
+  ];
+
+  const SelectedExample = examples[selectedExampleIndex];
 
   return (
     <div className="app">
@@ -24,12 +38,33 @@ export default function App() {
         </select>
       </div>
       <div className="example-container">
-        <Basic />
-        <MultiSource />
-        <MuteUnmute />
-        <PlaybackSpeed />
-        <CustomStyle />
-        <LocalFileAudio />
+        <h2 id="example-list-title">Examples</h2>
+        <div
+          className="example-tablist"
+          role="tablist"
+          aria-labelledby="example-list-title"
+        >
+          {examples.map((fn, index) => (
+            <button
+              key={fn.name}
+              id={`example-tab-${index}`}
+              type="button"
+              role="tab"
+              aria-selected={selectedExampleIndex === index}
+              aria-controls="example-tabpanel"
+              onClick={() => setSelectedExampleIndex(index)}
+            >
+              <span>{fn.name}</span>
+            </button>
+          ))}
+        </div>
+        <div
+          id="example-tabpanel"
+          role="tabpanel"
+          aria-labelledby={`example-tab-${selectedExampleIndex}`}
+        >
+          <SelectedExample />
+        </div>
       </div>
     </div>
   );
@@ -37,19 +72,19 @@ export default function App() {
 
 function Basic() {
   return (
-    <>
+    <div className="example-content">
       <h3>Basic</h3>
 
       <VoicemailPlayer>
         {(audioRef) => <audio ref={audioRef} src="/audio/long.mp3" />}
       </VoicemailPlayer>
-    </>
+    </div>
   );
 }
 
 function MultiSource() {
   return (
-    <>
+    <div className="example-content">
       <h3>
         Audio with multiple <code>&lt;source&gt;</code> tags
       </h3>
@@ -61,7 +96,7 @@ function MultiSource() {
           </audio>
         )}
       </VoicemailPlayer>
-    </>
+    </div>
   );
 }
 
@@ -69,7 +104,7 @@ function MuteUnmute() {
   const [isMuted, setIsMuted] = useState(false);
 
   return (
-    <>
+    <div className="example-content">
       <h3>
         Controlling <code>mute</code> attribute
       </h3>
@@ -81,7 +116,7 @@ function MuteUnmute() {
           <audio ref={audioRef} src="/audio/long.mp3" muted={isMuted} />
         )}
       </VoicemailPlayer>
-    </>
+    </div>
   );
 }
 
@@ -97,7 +132,7 @@ function PlaybackSpeed() {
   }, [speed]);
 
   return (
-    <>
+    <div className="example-content">
       <h3>Controlling playback speed</h3>
       <div className="my-player-wrapper">
         <VoicemailPlayer>
@@ -123,19 +158,19 @@ function PlaybackSpeed() {
           <option value="2">2</option>
         </select>
       </div>
-    </>
+    </div>
   );
 }
 
 function CustomStyle() {
   return (
-    <>
+    <div className="example-content">
       <h3>Custom Style</h3>
 
       <VoicemailPlayer className="orange-player">
         {(audioRef) => <audio ref={audioRef} src="/audio/short.mp3" />}
       </VoicemailPlayer>
-    </>
+    </div>
   );
 }
 
@@ -144,7 +179,7 @@ function LocalFileAudio() {
   const localFileUrl = useBlobUrl(localFile);
 
   return (
-    <>
+    <div className="example-content">
       <h3>Audio from local file</h3>
       <input
         type="file"
@@ -155,7 +190,19 @@ function LocalFileAudio() {
       <VoicemailPlayer>
         {(audioRef) => <audio ref={audioRef} src={localFileUrl} />}
       </VoicemailPlayer>
-    </>
+    </div>
+  );
+}
+
+function CustomBars() {
+  return (
+    <div className="example-content">
+      <h3>Custom Bars</h3>
+
+      <VoicemailPlayer barAlignment="middle" barWidth={4} barGap={3}>
+        {(audioRef) => <audio ref={audioRef} src="/audio/stereo-sound.mp3" />}
+      </VoicemailPlayer>
+    </div>
   );
 }
 

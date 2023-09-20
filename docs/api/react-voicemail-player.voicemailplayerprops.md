@@ -16,6 +16,10 @@ export interface VoicemailPlayerProps
 
 |  Property | Modifiers | Type | Description |
 |  --- | --- | --- | --- |
+|  [barAlignment?](./react-voicemail-player.voicemailplayerprops.baralignment.md) |  | "top" \| "middle" \| "bottom" | _(Optional)_ Vertical alignment of bars in waveform |
+|  [barGap?](./react-voicemail-player.voicemailplayerprops.bargap.md) |  | number | _(Optional)_ Spacing between bars in waveform in pixels |
+|  [barRadius?](./react-voicemail-player.voicemailplayerprops.barradius.md) |  | number | _(Optional)_ Corner radius of bars in waveform in pixels |
+|  [barWidth?](./react-voicemail-player.voicemailplayerprops.barwidth.md) |  | number | _(Optional)_ Width of a single bar in waveform in pixels |
 |  [children](./react-voicemail-player.voicemailplayerprops.children.md) |  | (ref: React.RefCallback&lt;HTMLAudioElement&gt;) =&gt; React.ReactElement | A function that renders <audio> element |
 |  [className?](./react-voicemail-player.voicemailplayerprops.classname.md) |  | string | _(Optional)_ Optional CSS class to add to the player's root element |
 

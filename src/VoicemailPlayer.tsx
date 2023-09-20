@@ -27,6 +27,30 @@ export interface VoicemailPlayerProps {
    * Optional CSS class to add to the player's root element
    */
   className?: string;
+
+  /**
+   * Vertical alignment of bars in waveform
+   * @defaultValue `"bottom"`
+   */
+  barAlignment?: "top" | "middle" | "bottom";
+
+  /**
+   * Width of a single bar in waveform in pixels
+   * @defaultValue `2`
+   */
+  barWidth?: number;
+
+  /**
+   * Spacing between bars in waveform in pixels
+   * @defaultValue `2`
+   */
+  barGap?: number;
+
+  /**
+   * Corner radius of bars in waveform in pixels
+   * @defaultValue `barWidth / 2`
+   */
+  barRadius?: number;
 }
 
 /**
@@ -46,6 +70,10 @@ export interface VoicemailPlayerProps {
 export default function VoicemailPlayer({
   children,
   className,
+  barAlignment,
+  barWidth,
+  barGap,
+  barRadius,
 }: VoicemailPlayerProps) {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
     null
@@ -105,6 +133,10 @@ export default function VoicemailPlayer({
         <AudioPeaksBar
           audioData={playback.data}
           progress={playback.progress}
+          barAlignment={barAlignment}
+          barWidth={barWidth}
+          barGap={barGap}
+          barRadius={barRadius}
           onProgressChange={onProgressChange}
         />
         <div>{renderStatus()}</div>

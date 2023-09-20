@@ -11,24 +11,37 @@ import useAudioPeaks from "../hooks/useAudioPeaks";
 export interface AudioPeaksBarProps {
   audioData: AudioBuffer | null;
   progress: number;
+  barAlignment?: "top" | "middle" | "bottom";
+  barWidth?: number;
+  barGap?: number;
+  barRadius?: number;
   onProgressChange: (progress: number) => void;
 }
 
 type Size = { width: number; height: number };
 
-const BAR_WIDTH = 2;
-const BAR_GAP = 2;
+const DEFAULT_BAR_WIDTH = 2;
+const DEFAULT_BAR_GAP = 2;
 const MIN_BAR_HEIGHT = 2;
 
 export default memo(function AudioPeaksBar({
   audioData,
   progress,
+  barAlignment = "bottom",
+  barWidth = DEFAULT_BAR_WIDTH,
+  barGap = DEFAULT_BAR_GAP,
+  barRadius,
   onProgressChange,
 }: AudioPeaksBarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const { width, height } = useElementSize(containerRef);
 
-  const barCount = Math.round(width / (BAR_WIDTH + BAR_GAP));
+  barWidth =
+    Number.isFinite(barWidth) && barWidth > 0 ? barWidth : DEFAULT_BAR_WIDTH;
+  barGap = Number.isFinite(barGap) ? barGap : DEFAULT_BAR_GAP;
+  barRadius = Number.isFinite(barRadius) ? barRadius : barWidth / 2;
+
+  const barCount = Math.round(width / (barWidth + barGap));
   const peaks = useAudioPeaks(audioData, barCount);
 
   const { current: clipPathId } = useRef<string>(
@@ -71,35 +84,36 @@ export default memo(function AudioPeaksBar({
   );
 
   const renderBars = () => {
+    const halfHeight = (height - MIN_BAR_HEIGHT) / 2;
     const result = [];
-    const availableHeight = height - MIN_BAR_HEIGHT;
 
     for (let i = 0; i < peaks.length; i++) {
-      const barHeight = Math.floor(peaks[i] * availableHeight) + MIN_BAR_HEIGHT;
-      const barX = i * (BAR_WIDTH + BAR_GAP);
-      const barY = height - barHeight;
+      const topBarHeight = Math.floor(peaks[i][0] * halfHeight);
+      const bottomBarHeight = Math.floor(peaks[i][1] * halfHeight);
+
+      const barHeight = topBarHeight + bottomBarHeight + MIN_BAR_HEIGHT;
+      const barX = i * (barWidth + barGap);
+      let barY;
+      if (barAlignment === "top") {
+        barY = 0;
+      } else if (barAlignment === "bottom") {
+        barY = height - barHeight;
+      } else {
+        // middle
+        barY = halfHeight - topBarHeight;
+      }
 
       result.push(
         <rect
           key={i}
           x={barX}
           y={barY}
-          width={BAR_WIDTH}
+          width={barWidth}
           height={barHeight}
-          rx={BAR_WIDTH / 2}
-          ry={BAR_WIDTH / 2}
+          rx={barRadius}
+          ry={barRadius}
           fill="transparent"
-        >
-          <animateTransform
-            attributeName="transform"
-            type="translate"
-            // MIN_BAR_HEIGHT pixels of the bar should always be visible
-            from={`0 ${barHeight - MIN_BAR_HEIGHT}`}
-            to="0 0"
-            dur="250ms"
-            repeatCount="1"
-          />
-        </rect>
+        />
       );
     }
     return result;
@@ -148,7 +162,7 @@ function useElementSize(ref: React.RefObject<HTMLElement>): Size {
       );
       return;
     }
-    const bbox = ref.current!.getBoundingClientRect();
+    const bbox = element.getBoundingClientRect();
     setSize({ width: bbox.width, height: bbox.height });
   }, []);
 
