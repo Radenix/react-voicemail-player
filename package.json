@@ -1,6 +1,6 @@
 {
   "name": "react-voicemail-player",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "React component for rendering voice messages in chat-based apps",
   "homepage": "https://github.com/vadimavdeev/react-voicemail-player",
   "type": "module",
