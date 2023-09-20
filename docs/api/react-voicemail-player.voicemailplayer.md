@@ -9,14 +9,14 @@ Given a function that renders an <audio> element as `children`<!-- -->, renders 
 **Signature:**
 
 ```typescript
-export default function VoicemailPlayer({ children, className, }: VoicemailPlayerProps): React.JSX.Element;
+export default function VoicemailPlayer({ children, className, barAlignment, barWidth, barGap, barRadius, }: VoicemailPlayerProps): React.JSX.Element;
 ```
 
 ## Parameters
 
 |  Parameter | Type | Description |
 |  --- | --- | --- |
-|  { children, className, } | [VoicemailPlayerProps](./react-voicemail-player.voicemailplayerprops.md) |  |
+|  { children, className, barAlignment, barWidth, barGap, barRadius, } | [VoicemailPlayerProps](./react-voicemail-player.voicemailplayerprops.md) |  |
 
 **Returns:**
 

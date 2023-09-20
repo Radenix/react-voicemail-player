@@ -10,7 +10,7 @@ Audio player component for React that displays audio amplitude peaks
 
 |  Function | Description |
 |  --- | --- |
-|  [VoicemailPlayer({ children, className, })](./react-voicemail-player.voicemailplayer.md) | Given a function that renders an <audio> element as <code>children</code>, renders a React element that displays the audio's amplitude peaks, current time / duration, and allows to control the audio playback (currently Play / Pause, and Seek) |
+|  [VoicemailPlayer({ children, className, barAlignment, barWidth, barGap, barRadius, })](./react-voicemail-player.voicemailplayer.md) | Given a function that renders an <audio> element as <code>children</code>, renders a React element that displays the audio's amplitude peaks, current time / duration, and allows to control the audio playback (currently Play / Pause, and Seek) |
 
 ## Interfaces
 

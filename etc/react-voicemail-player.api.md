@@ -7,11 +7,15 @@
 import { default as React_2 } from 'react';
 
 // @public
-function VoicemailPlayer({ children, className, }: VoicemailPlayerProps): React_2.JSX.Element;
+function VoicemailPlayer({ children, className, barAlignment, barWidth, barGap, barRadius, }: VoicemailPlayerProps): React_2.JSX.Element;
 export default VoicemailPlayer;
 
 // @public
 export interface VoicemailPlayerProps {
+    barAlignment?: "top" | "middle" | "bottom";
+    barGap?: number;
+    barRadius?: number;
+    barWidth?: number;
     children: (ref: React_2.RefCallback<HTMLAudioElement>) => React_2.ReactElement;
     className?: string;
 }
