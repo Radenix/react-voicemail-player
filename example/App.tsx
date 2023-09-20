@@ -16,6 +16,7 @@ export default function App() {
     PlaybackSpeed,
     CustomStyle,
     LocalFileAudio,
+    CustomBars,
   ];
 
   const SelectedExample = examples[selectedExampleIndex];
@@ -188,6 +189,18 @@ function LocalFileAudio() {
 
       <VoicemailPlayer>
         {(audioRef) => <audio ref={audioRef} src={localFileUrl} />}
+      </VoicemailPlayer>
+    </div>
+  );
+}
+
+function CustomBars() {
+  return (
+    <div className="example-content">
+      <h3>Custom Bars</h3>
+
+      <VoicemailPlayer barAlignment="middle" barWidth={4} barGap={3}>
+        {(audioRef) => <audio ref={audioRef} src="/audio/stereo-sound.mp3" />}
       </VoicemailPlayer>
     </div>
   );
