@@ -2,7 +2,7 @@
 
 The audio player control for React that displays the audio's amplitude peaks. Loads and decodes the audio data in memory, so best suited for small audio files, like voicemail, hence the name. The use case I had in mind is chat-based apps where users can send voice messages. Inspired by audio player in the Telegram messenger.
 
-<img src="./docs/images/three-players.png" width="384">
+<img src="./docs/images/player-default-white.png" width="100%">
 
 Note, this is neither a powerful audio visualization library, nor a powerful audio player. If you need rich visualizations, I suggest [wavesurfer.js](https://wavesurfer-js.org/). If you look for a general-purpose audio player, check out [react-audio-player-pro](https://webbestmaster.github.io/react-audio-player-pro/).
 
@@ -52,10 +52,14 @@ Since you have full control over the `<audio>` element, you can implement whatev
 
 ## API
 
-Currently, the component only accepts two props:
+Component accepts the following props (only `children` is required):
 
 - `children: (ref: React.RefCallback<HTMLAudioElement>) => React.ReactElement` - A function that renders the `<audio>` element and sets its `ref` prop
 - `className: string` - A CSS class name to give to the component's root element
+- `barAlignment: "top" | "middle" | "bottom"` - Vertical alignment of bars in waveform. Default is `"bottom"`.
+- `barWidth: number` - Width of a single bar in waveform in pixels. Default is `2`.
+- `barGap: number` - Spacing between bars in waveform in pixels. Default is `2`.
+- `barRadius: number` - Corner radius of bars in waveform in pixels. Default is `barWidth / 2`.
 
 See the full [API Reference](./docs/api/index.md).
 
