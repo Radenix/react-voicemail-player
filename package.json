@@ -24,7 +24,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:Radenix/react-voicemail-player.git"
+    "url": "https://github.com/Radenix/react-voicemail-player.git"
+
   },
   "keywords": [
     "react",
