@@ -2,7 +2,7 @@
   "name": "react-voicemail-player",
   "version": "0.0.10",
   "description": "React component for rendering voice messages in chat-based apps",
-  "homepage": "https://github.com/vadimavdeev/react-voicemail-player",
+  "homepage": "https://github.com/Radenix/react-voicemail-player",
   "type": "module",
   "main": "dist/react-voicemail-player.cjs.js",
   "module": "dist/react-voicemail-player.esm.js",
@@ -24,7 +24,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:vadimavdeev/react-voicemail-player.git"
+    "url": "git@github.com:Radenix/react-voicemail-player.git"
   },
   "keywords": [
     "react",
