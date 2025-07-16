@@ -15,6 +15,8 @@ export interface AudioPeaksBarProps {
   barWidth?: number;
   barGap?: number;
   barRadius?: number;
+  barHeight?: number;
+  barColor?: string;
   onProgressChange: (progress: number) => void;
 }
 
@@ -31,6 +33,8 @@ export default memo(function AudioPeaksBar({
   barWidth = DEFAULT_BAR_WIDTH,
   barGap = DEFAULT_BAR_GAP,
   barRadius,
+  barHeight = 32, 
+  barColor = "#2196f3", 
   onProgressChange,
 }: AudioPeaksBarProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -40,6 +44,7 @@ export default memo(function AudioPeaksBar({
     Number.isFinite(barWidth) && barWidth > 0 ? barWidth : DEFAULT_BAR_WIDTH;
   barGap = Number.isFinite(barGap) ? barGap : DEFAULT_BAR_GAP;
   barRadius = Number.isFinite(barRadius) ? barRadius : barWidth / 2;
+  barHeight = Number.isFinite(barHeight) && barHeight > 0 ? barHeight : 32;
 
   const barCount = Math.round(width / (barWidth + barGap));
   const peaks = useAudioPeaks(audioData, barCount);
@@ -83,8 +88,10 @@ export default memo(function AudioPeaksBar({
     [onProgressChange]
   );
 
+  const svgHeight = barHeight;
+
   const renderBars = () => {
-    const halfHeight = (height - MIN_BAR_HEIGHT) / 2;
+    const halfHeight = (svgHeight - MIN_BAR_HEIGHT) / 2;
     const result = [];
 
     for (let i = 0; i < peaks.length; i++) {
@@ -97,7 +104,7 @@ export default memo(function AudioPeaksBar({
       if (barAlignment === "top") {
         barY = 0;
       } else if (barAlignment === "bottom") {
-        barY = height - barHeight;
+        barY = svgHeight - barHeight;
       } else {
         // middle
         barY = halfHeight - topBarHeight;
@@ -112,7 +119,7 @@ export default memo(function AudioPeaksBar({
           height={barHeight}
           rx={barRadius}
           ry={barRadius}
-          fill="transparent"
+          fill={barColor} 
         />
       );
     }
@@ -124,8 +131,9 @@ export default memo(function AudioPeaksBar({
       data-testid="rvmp-peaks-bar"
       onPointerDown={onDragStart}
       ref={containerRef}
+      style={{ height: svgHeight }} // Container height
     >
-      <svg className={prefixClassName("peaks")}>
+      <svg className={prefixClassName("peaks")}  width={width} height={svgHeight}>
         <defs>
           <clipPath id={clipPathId}>{renderBars()}</clipPath>
         </defs>

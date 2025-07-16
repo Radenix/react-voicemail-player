@@ -51,6 +51,18 @@ export interface VoicemailPlayerProps {
    * @defaultValue `barWidth / 2`
    */
   barRadius?: number;
+
+  /**
+   * Height of bars in waveform in pixels
+   * @defaultValue `32`
+   */
+  barHeight?: number;
+
+  /**
+   * Color of bars in waveform
+   * @defaultValue `"#2196f3"`
+   */
+  barColor?: string;
 }
 
 /**
@@ -74,6 +86,8 @@ export default function VoicemailPlayer({
   barWidth,
   barGap,
   barRadius,
+  barHeight = 32,
+  barColor = "#2196f3",
 }: VoicemailPlayerProps) {
   const [audioElement, setAudioElement] = useState<HTMLAudioElement | null>(
     null
@@ -137,6 +151,8 @@ export default function VoicemailPlayer({
           barWidth={barWidth}
           barGap={barGap}
           barRadius={barRadius}
+          barHeight={barHeight}
+          barColor={barColor}
           onProgressChange={onProgressChange}
         />
         <div>{renderStatus()}</div>
